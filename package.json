@@ -1,0 +1,14 @@
+{
+  "name": "selfapp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run dev:be & bun run dev:fe",
+    "dev:be": "bun --watch be/server.ts",
+    "dev:fe": "bun run --cwd fe dev",
+    "build": "bun run --cwd fe build",
+    "start": "bun be/server.ts",
+    "cli": "bun cli/index.ts",
+    "db:migrate": "bun db/migrate.ts"
+  }
+}
