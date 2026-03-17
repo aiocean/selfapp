@@ -10,5 +10,5 @@
       "@shared/*": ["./shared/*"]
     }
   },
-  "include": ["shared", "be", "db", "cli", "cron"]
+  "include": ["shared", "be", "db", "worker-configuration.d.ts"]
 }

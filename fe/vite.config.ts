@@ -12,7 +12,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/api': `http://localhost:${process.env.PORT || 3000}`,
+      '/api': 'http://localhost:8787',
     },
   },
 })

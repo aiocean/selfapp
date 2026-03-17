@@ -3,12 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run dev:be & bun run dev:fe",
-    "dev:be": "bun --watch be/server.ts",
+    "dev": "wrangler dev",
     "dev:fe": "bun run --cwd fe dev",
     "build": "bun run --cwd fe build",
-    "start": "bun be/server.ts",
-    "cli": "bun cli/index.ts",
-    "db:migrate": "bun db/migrate.ts"
+    "deploy": "bun run build && wrangler deploy",
+    "db:create": "wrangler d1 create selfapp-db",
+    "db:migrate": "wrangler d1 migrations apply selfapp-db --local",
+    "db:migrate:prod": "wrangler d1 migrations apply selfapp-db --remote"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.74.0"
   }
 }

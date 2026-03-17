@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "selfapp",
+  "main": "be/worker.ts",
+  "compatibility_date": "2026-03-01",
+  "compatibility_flags": ["nodejs_compat_v2"],
+
+  // Static frontend assets (Vue SPA)
+  "assets": {
+    "directory": "fe/dist",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+
+  // D1 SQLite database
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "selfapp-db",
+      "database_id": "",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+
+  // Cron jobs (UTC)
+  "triggers": {
+    "crons": ["0 0 * * *"]
+  },
+
+  // Observability
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
