@@ -63,10 +63,8 @@ timeout 10 bunx wrangler tail --format json 2>&1 | head -50
 # Nếu đang chạy wrangler dev, kiểm tra process
 ps aux | grep wrangler | grep -v grep
 
-# Test RPC endpoint trực tiếp
-curl -s -X POST http://localhost:8787/api/rpc \
-  -H "Content-Type: application/json" \
-  -d '{"method":"<first-method-in-rpc.ts>","input":{}}' 2>&1
+# Test REST API endpoint trực tiếp
+curl -s http://localhost:8787/api/notes 2>&1
 
 # Test chat endpoint (nếu có)
 curl -s -X POST http://localhost:8787/api/chat \
@@ -108,7 +106,7 @@ grep -rn "^const.*=.*\[\]$\|^const.*=.*{}$\|^let " be/ 2>/dev/null
 grep -rn "\.prepare(.*\.all\b\|\.prepare(.*\.first\b\|\.prepare(.*\.run\b" be/ 2>/dev/null | grep -v await
 
 # 5. String interpolation in SQL (injection risk)
-grep -rn '`.*\$.*`' be/handlers/ 2>/dev/null
+grep -rn '`.*\$.*`' be/routes/ 2>/dev/null
 ```
 
 ## Bước 3: Đọc code liên quan
@@ -118,17 +116,17 @@ Dựa trên triệu chứng + kết quả quét, đọc các file liên quan:
 | Triệu chứng | Đọc file |
 |---|---|
 | Trang trắng | `fe/src/main.ts`, `fe/src/App.vue`, `fe/index.html` |
-| Data không hiện | `shared/rpc.ts`, handler tương ứng trong `be/handlers/`, composable trong `fe/src/composables/` |
+| Data không hiện | `shared/types.ts`, route tương ứng trong `be/routes/`, composable trong `fe/src/composables/` |
 | Chat/AI lỗi | `be/chat.ts` (hoặc file AI), kiểm tra env bindings |
-| Lưu data lỗi | `be/handlers/`, `db/migrations/`, kiểm tra schema vs query |
+| Lưu data lỗi | `be/routes/`, `db/migrations/`, kiểm tra schema vs query |
 | Deploy lỗi | `wrangler.jsonc`, `package.json` scripts |
 
-**Đọc cả `shared/rpc.ts`** để hiểu toàn bộ contract — lỗi RPC thường do mismatch giữa FE gọi và BE xử lý.
+**Đọc cả `shared/types.ts`** để hiểu toàn bộ data model — lỗi API thường do mismatch giữa FE gọi và BE xử lý.
 
 ## Bước 4: Chẩn đoán
 
 Từ tất cả data thu thập, xác định:
-1. **Layer nào lỗi**: FE / RPC / BE / D1 / AI / Deploy
+1. **Layer nào lỗi**: FE / REST API / BE / D1 / AI / Deploy
 2. **Root cause**: nguyên nhân gốc, không phải triệu chứng
 3. **Fix cần làm**: liệt kê cụ thể file nào, dòng nào
 
@@ -137,7 +135,7 @@ Từ tất cả data thu thập, xác định:
 | Lỗi | Root cause thường gặp | Fix |
 |---|---|---|
 | `TypeError: Cannot read properties of null` | D1 `.first()` trả null, không check | Thêm null check |
-| `Unknown method: xxx` | Method chưa register hoặc typo | Check `shared/rpc.ts` + handler import trong `worker.ts` |
+| `404 Not Found` | URL sai hoặc route chưa register | Check `be/routes/` + route registration trong `worker.ts` |
 | `D1_ERROR: no such table` | Migration chưa apply | `bunx wrangler d1 migrations apply` |
 | `D1_ERROR: no such column` | Schema outdated | Tạo migration mới |
 | Trang trắng, console lỗi | Import sai, component crash | Check `bunx tsc --noEmit` trong fe/ |
@@ -161,9 +159,7 @@ cd fe && bunx tsc --noEmit 2>&1
 cd fe && bun run build 2>&1
 
 # 3. Test endpoint bị lỗi
-curl -s -X POST http://localhost:8787/api/rpc \
-  -H "Content-Type: application/json" \
-  -d '{"method":"<method>","input":<input>}'
+curl -s http://localhost:8787/api/notes
 
 # 4. Nếu đổi schema → tạo migration + apply
 bunx wrangler d1 migrations apply <db-name> --local
@@ -182,7 +178,7 @@ Ví dụ:
 
 **KHÔNG BAO GIỜ:**
 - Show stack trace cho user
-- Nói "RPC handler throw error"
+- Nói "API handler throw error"
 - Nói "migration 003 thiếu column xyz"
 - Giải thích kỹ thuật trừ khi user hỏi
 
@@ -198,9 +194,7 @@ bunx wrangler tail --format pretty 2>&1
 bunx wrangler d1 execute <db-name> --remote --command "SELECT count(*) FROM <table>"
 
 # 3. Test production endpoint
-curl -s -X POST https://<app>.workers.dev/api/rpc \
-  -H "Content-Type: application/json" \
-  -d '{"method":"<method>","input":{}}'
+curl -s https://<app>.workers.dev/api/notes
 
 # 4. Kiểm tra production secrets
 bunx wrangler secret list

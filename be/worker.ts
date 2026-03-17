@@ -1,24 +1,18 @@
-import { handleRpc } from './router'
-import './handlers/notes'
+import { Hono } from 'hono'
+import { notesRoutes } from './routes/notes'
+
+type Bindings = Env
+
+const app = new Hono<{ Bindings: Bindings }>()
+
+// REST API routes
+app.route('/api/notes', notesRoutes)
+
+// Static assets (SPA) handled by assets binding
+app.all('*', (c) => c.env.ASSETS.fetch(c.req.raw))
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
-    const url = new URL(request.url)
-
-    // RPC endpoint
-    if (url.pathname === '/api/rpc' && request.method === 'POST') {
-      try {
-        const body = (await request.json()) as { method: string; input: unknown }
-        const result = await handleRpc(env, body.method, body.input)
-        return Response.json({ result })
-      } catch (e: any) {
-        return Response.json({ error: e.message }, { status: 400 })
-      }
-    }
-
-    // Static assets (SPA) handled by assets binding
-    return env.ASSETS.fetch(request)
-  },
+  fetch: app.fetch,
 
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
     // Cleanup empty notes older than 7 days

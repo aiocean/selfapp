@@ -18,7 +18,7 @@ async function onNew() {
 
 async function onSave(data: { title: string; content: string }) {
   if (!selectedNote.value) return
-  const updated = await updateNote({ id: selectedNote.value.id, ...data })
+  const updated = await updateNote(selectedNote.value.id, data)
   selectedNote.value = updated
 }
 

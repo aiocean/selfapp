@@ -1,6 +1,6 @@
 import { ref } from 'vue'
 import type { Note, CreateNote, UpdateNote } from '@shared/types'
-import { rpc } from './useRpc'
+import { api } from './useApi'
 
 const notes = ref<Note[]>([])
 const loading = ref(false)
@@ -9,27 +9,27 @@ export function useNotes() {
   async function fetchNotes(query?: string) {
     loading.value = true
     try {
-      notes.value = await rpc('notes.list', { query })
+      notes.value = await api.notesList(query)
     } finally {
       loading.value = false
     }
   }
 
   async function createNote(input: CreateNote) {
-    const note = await rpc('notes.create', input)
+    const note = await api.notesCreate(input)
     notes.value.unshift(note)
     return note
   }
 
-  async function updateNote(input: UpdateNote) {
-    const updated = await rpc('notes.update', input)
-    const idx = notes.value.findIndex((n) => n.id === input.id)
+  async function updateNote(id: string, input: UpdateNote) {
+    const updated = await api.notesUpdate(id, input)
+    const idx = notes.value.findIndex((n) => n.id === id)
     if (idx !== -1) notes.value[idx] = updated
     return updated
   }
 
   async function deleteNote(id: string) {
-    await rpc('notes.delete', { id })
+    await api.notesDelete(id)
     notes.value = notes.value.filter((n) => n.id !== id)
   }
 

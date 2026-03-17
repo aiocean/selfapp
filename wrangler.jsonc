@@ -18,7 +18,7 @@
     {
       "binding": "DB",
       "database_name": "selfapp-db",
-      "database_id": "",
+      "database_id": "e321c4f8-795d-4c6e-a6e2-d65856aca778",
       "migrations_dir": "db/migrations"
     }
   ],

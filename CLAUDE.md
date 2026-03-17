@@ -40,6 +40,33 @@ User mô tả ý tưởng
   → AI báo kết quả: "App đã sẵn sàng tại [link]"
 ```
 
+## Output Style — Viết cho người không biết lập trình
+
+### Giọng văn
+- Thân thiện, ngắn gọn, như đang nhắn tin với bạn bè
+- Dùng "mình" / "bạn", không dùng "tôi" / "user"
+- Câu ngắn. Tránh câu phức nhiều mệnh đề.
+- Xưng hô nhất quán, tự nhiên suốt cuộc trò chuyện
+
+### Tuyệt đối KHÔNG dùng
+- Thuật ngữ kỹ thuật không giải thích: API, RPC, migration, deploy, handler, composable, endpoint, Worker, binding, D1, KV...
+- Bullet list dày đặc kiểu tài liệu kỹ thuật
+- Code snippet trong tin nhắn hướng dẫn (trừ khi user hỏi cụ thể)
+- Câu kiểu báo cáo: "Successfully executed", "Implementation complete", "Task has been completed"
+- Giải thích dài dòng những gì vừa làm — chỉ nói kết quả
+
+### Thay thế bằng
+- Tên gọi gần gũi: "phần lưu dữ liệu", "nút bấm", "trang hiển thị", "lệnh chạy app", "đưa app lên mạng"
+- Xác nhận bằng kết quả cụ thể: "App đang chạy tại localhost:5173 rồi bạn nhé"
+- Ví dụ thực tế: "Database giống cuốn sổ tay — ghi vào đó để lần sau mở lên vẫn còn"
+- Câu hỏi đơn giản khi cần xác nhận: "Bạn muốn nút này màu xanh hay đỏ?"
+
+### Khi báo lỗi
+- KHÔNG paste stack trace hay error log vào tin nhắn
+- Tóm tắt vấn đề bằng ngôn ngữ thường: "App đang bị lỗi vì thiếu một file cấu hình"
+- Tự xử lý nếu được, báo kết quả sau khi xong: "Mình đã sửa xong, bạn thử lại nhé"
+- Nếu cần user làm gì đó, hướng dẫn từng bước cụ thể, không giả định họ biết gì
+
 ## Project Overview
 
 **selfapp** template — Full-stack app template chạy trên Cloudflare Workers. Ứng dụng ghi chú (notes) làm ví dụ minh hoạ. AI dùng template này để tạo selfapp cho user.
@@ -48,7 +75,7 @@ User mô tả ý tưởng
 
 - **Runtime**: Cloudflare Workers (V8 isolates, edge-distributed)
 - **Frontend**: Vue 3 (Composition API) + Vite + Tailwind CSS + Shadcn-vue
-- **Backend**: Cloudflare Workers fetch handler
+- **Backend**: Hono framework on Cloudflare Workers
 - **Database**: D1 (Cloudflare managed SQLite)
 - **File Storage**: R2 (S3-compatible, if needed)
 - **Cron**: Cloudflare Cron Triggers (UTC)
@@ -65,18 +92,17 @@ template/
 ├── package.json
 ├── tsconfig.json
 ├── shared/
-│   └── types.ts                # Data models + API contract (RpcMap)
+│   └── types.ts                # Data models (Note, CreateNote, UpdateNote)
 ├── be/
-│   ├── worker.ts               # Entry point: fetch() + scheduled() handlers
-│   ├── router.ts               # RPC handler registry + dispatcher
-│   └── handlers/
-│       └── notes.ts            # RPC handler implementations (D1 queries)
+│   ├── worker.ts               # Entry point: Hono app + scheduled() handler
+│   └── routes/
+│       └── notes.ts            # REST route handlers (D1 queries)
 ├── db/
 │   └── migrations/             # SQL migration files (applied via wrangler d1)
 │       └── 001_create_notes.sql
 └── fe/                         # Vue 3 SPA (served via Workers Static Assets)
     ├── src/
-    │   ├── composables/useRpc.ts   # Frontend RPC client
+    │   ├── composables/useApi.ts   # Frontend REST API client
     │   ├── composables/useNotes.ts # State management
     │   └── components/             # Vue components
     ├── vite.config.ts
@@ -85,14 +111,14 @@ template/
 
 ## Architecture
 
-### RPC System (type-safe FE ↔ BE)
+### REST API (Hono)
 
-`shared/types.ts` defines data models and the API contract (`RpcMap`). BE registers handlers via `rpc()` in `be/router.ts`. FE calls via `rpc()` in `fe/src/composables/useRpc.ts`. Single endpoint: `POST /api/rpc` with `{ method, input }`.
+`shared/types.ts` defines data models (`Note`, `CreateNote`, `UpdateNote`). BE mounts Hono route groups in `be/worker.ts`, with route handlers in `be/routes/notes.ts`. FE calls via the `api` object in `fe/src/composables/useApi.ts` using standard HTTP methods. REST endpoints: `GET /api/notes`, `GET /api/notes/:id`, `POST /api/notes`, `PUT /api/notes/:id`, `DELETE /api/notes/:id`.
 
 ### Data Flow
 
 ```
-FE composable → fetch('/api/rpc') → Worker fetch handler → router → handler(input, db) → D1 → response
+FE composable → api.get/post/put/delete('/api/notes') → Hono router → route handler(c, db) → D1 → response
 ```
 
 ### Static Assets + API Routing
@@ -128,11 +154,12 @@ bun run db:migrate:prod  # Apply migrations to production D1
 bunx wrangler types      # Regenerate worker-configuration.d.ts
 ```
 
-## Adding a New RPC Method
+## Adding a New API Endpoint
 
-1. Add type to `shared/types.ts` → `RpcMap`
-2. Add handler in `be/handlers/` — handler signature: `async (input, db: D1Database) => output`
-3. Call from FE via `rpc('method.name', input)` — fully typed end-to-end
+1. Add or update types in `shared/types.ts` (request/response shapes)
+2. Add route handler in `be/routes/` — handler signature: `async (c: Context) => Response`
+3. Mount the route in `be/worker.ts` Hono app
+4. Call from FE via the `api` object in `fe/src/composables/useApi.ts` with the appropriate HTTP method
 
 ## Adding a Cron Job
 
@@ -249,7 +276,7 @@ Skills tại `.claude/skills/`:
 - `wrangler/` — Wrangler CLI: deploy, dev, bindings, migrations, testing
 - `workers-best-practices/` — Code review rules, anti-patterns, security, streaming
 - `release/` — Quy trình deploy selfapp lên Cloudflare (8 bước)
-- `debug/` — Debug theo từng layer: FE, RPC, BE, D1, AI SDK, Deploy
+- `debug/` — Debug theo từng layer: FE, REST API, BE, D1, AI SDK, Deploy
 
 Slash commands tại `.claude/commands/`:
 - `/release` — Triển khai app lên Cloudflare
