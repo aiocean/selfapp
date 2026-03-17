@@ -65,8 +65,7 @@ template/
 ├── package.json
 ├── tsconfig.json
 ├── shared/
-│   ├── rpc.ts                  # RPC type contract (add new methods here first)
-│   └── types.ts                # Shared data types
+│   └── types.ts                # Data models + API contract (RpcMap)
 ├── be/
 │   ├── worker.ts               # Entry point: fetch() + scheduled() handlers
 │   ├── router.ts               # RPC handler registry + dispatcher
@@ -88,7 +87,7 @@ template/
 
 ### RPC System (type-safe FE ↔ BE)
 
-`shared/rpc.ts` defines the RPC contract (`RpcMap`). BE registers handlers via `rpc()` in `be/router.ts`. FE calls via `rpc()` in `fe/src/composables/useRpc.ts`. Single endpoint: `POST /api/rpc` with `{ method, input }`.
+`shared/types.ts` defines data models and the API contract (`RpcMap`). BE registers handlers via `rpc()` in `be/router.ts`. FE calls via `rpc()` in `fe/src/composables/useRpc.ts`. Single endpoint: `POST /api/rpc` with `{ method, input }`.
 
 ### Data Flow
 
@@ -131,7 +130,7 @@ bunx wrangler types      # Regenerate worker-configuration.d.ts
 
 ## Adding a New RPC Method
 
-1. Add type to `shared/rpc.ts` → `RpcMap`
+1. Add type to `shared/types.ts` → `RpcMap`
 2. Add handler in `be/handlers/` — handler signature: `async (input, db: D1Database) => output`
 3. Call from FE via `rpc('method.name', input)` — fully typed end-to-end
 

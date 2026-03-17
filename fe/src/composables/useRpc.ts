@@ -1,4 +1,4 @@
-import type { RpcMap, RpcMethod } from '@shared/rpc'
+import type { RpcMap, RpcMethod } from '@shared/types'
 
 export async function rpc<M extends RpcMethod>(
   method: M,

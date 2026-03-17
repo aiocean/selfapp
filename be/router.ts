@@ -1,4 +1,4 @@
-import type { RpcMap, RpcMethod } from '../shared/rpc'
+import type { RpcMap, RpcMethod } from '../shared/types'
 
 type RpcHandler<M extends RpcMethod> = (
   input: RpcMap[M]['input'],
