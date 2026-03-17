@@ -2,17 +2,17 @@
 
 Use this template when dispatching a plan document reviewer subagent.
 
-**Purpose:** Verify the plan is complete, matches the spec, and has proper task decomposition.
+**Purpose:** Verify the plan chunk is complete, matches the spec, and has proper task decomposition.
 
-**Dispatch after:** The complete plan is written.
+**Dispatch after:** Each plan chunk is written
 
 ```
 Task tool (general-purpose):
-  description: "Review plan document"
+  description: "Review plan chunk N"
   prompt: |
-    You are a plan document reviewer. Verify this plan is complete and ready for implementation.
+    You are a plan document reviewer. Verify this plan chunk is complete and ready for implementation.
 
-    **Plan to review:** [PLAN_FILE_PATH]
+    **Plan chunk to review:** [PLAN_FILE_PATH] - Chunk N only
     **Spec for reference:** [SPEC_FILE_PATH]
 
     ## What to Check
@@ -20,30 +20,33 @@ Task tool (general-purpose):
     | Category | What to Look For |
     |----------|------------------|
     | Completeness | TODOs, placeholders, incomplete tasks, missing steps |
-    | Spec Alignment | Plan covers spec requirements, no major scope creep |
-    | Task Decomposition | Tasks have clear boundaries, steps are actionable |
-    | Buildability | Could an engineer follow this plan without getting stuck? |
+    | Spec Alignment | Chunk covers relevant spec requirements, no scope creep |
+    | Task Decomposition | Tasks atomic, clear boundaries, steps actionable |
+    | File Structure | Files have clear single responsibilities, split by responsibility not layer |
+    | File Size | Would any new or modified file likely grow large enough to be hard to reason about as a whole? |
+    | Task Syntax | Checkbox syntax (`- [ ]`) on steps for tracking |
+    | Chunk Size | Each chunk under 1000 lines |
 
-    ## Calibration
+    ## CRITICAL
 
-    **Only flag issues that would cause real problems during implementation.**
-    An implementer building the wrong thing or getting stuck is an issue.
-    Minor wording, stylistic preferences, and "nice to have" suggestions are not.
-
-    Approve unless there are serious gaps — missing requirements from the spec,
-    contradictory steps, placeholder content, or tasks so vague they can't be acted on.
+    Look especially hard for:
+    - Any TODO markers or placeholder text
+    - Steps that say "similar to X" without actual content
+    - Incomplete task definitions
+    - Missing verification steps or expected outputs
+    - Files planned to hold multiple responsibilities or likely to grow unwieldy
 
     ## Output Format
 
-    ## Plan Review
+    ## Plan Review - Chunk N
 
     **Status:** Approved | Issues Found
 
     **Issues (if any):**
-    - [Task X, Step Y]: [specific issue] - [why it matters for implementation]
+    - [Task X, Step Y]: [specific issue] - [why it matters]
 
-    **Recommendations (advisory, do not block approval):**
-    - [suggestions for improvement]
+    **Recommendations (advisory):**
+    - [suggestions that don't block approval]
 ```
 
 **Reviewer returns:** Status, Issues (if any), Recommendations

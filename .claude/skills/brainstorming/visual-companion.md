@@ -61,14 +61,6 @@ scripts/start-server.sh --project-dir /path/to/project
 scripts/start-server.sh --project-dir /path/to/project
 ```
 
-**Windows (Git Bash / CMD / PowerShell):**
-```bash
-# Windows/Git Bash reaps nohup background processes. The script auto-detects
-# this via OSTYPE/MSYSTEM and switches to foreground mode automatically.
-# No extra flags needed — all Windows shells route through Git Bash.
-scripts/start-server.sh --project-dir /path/to/project
-```
-
 **Gemini CLI:**
 ```bash
 # Use --foreground and set is_background: true on your shell tool call
@@ -91,8 +83,7 @@ Use `--url-host` to control what hostname is printed in the returned URL JSON.
 
 ## The Loop
 
-1. **Check server is alive**, then **write HTML** to a new file in `screen_dir`:
-   - Before each write, check that `$SCREEN_DIR/.server-info` exists. If it doesn't (or `.server-stopped` exists), the server has shut down — restart it with `start-server.sh` before continuing. The server auto-exits after 30 minutes of inactivity.
+1. **Write HTML** to a new file in `screen_dir`:
    - Use semantic filenames: `platform.html`, `visual-style.html`, `layout.html`
    - **Never reuse filenames** — each screen gets a fresh file
    - Use Write tool — **never use cat/heredoc** (dumps noise into terminal)

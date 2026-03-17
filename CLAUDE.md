@@ -136,8 +136,11 @@ Single `wrangler deploy` — Worker + static assets + D1 + cron, deployed global
 
 ## Commands
 
+**IMPORTANT: Lần đầu chạy dev, PHẢI chạy `bun run db:migrate` trước để tạo bảng dữ liệu. Nếu không sẽ lỗi "no such table".**
+
 ```bash
-# Development
+# Development (lần đầu: chạy db:migrate trước!)
+bun run db:migrate       # Apply migrations locally (BẮT BUỘC trước khi dev lần đầu)
 bun run dev              # Start wrangler dev (Worker + local D1 + static assets)
 bun run dev:fe           # Start Vite dev server (FE with HMR)
 
@@ -147,7 +150,6 @@ bun run deploy           # Build FE + deploy Worker to Cloudflare
 
 # Database
 bun run db:create        # Create D1 database (first time only)
-bun run db:migrate       # Apply migrations locally
 bun run db:migrate:prod  # Apply migrations to production D1
 
 # Types (run after changing wrangler.jsonc)
@@ -271,14 +273,30 @@ return new Response(object.body, { headers })
 
 ## Installed Skills & Commands
 
-Skills tại `.claude/skills/`:
+Skills tại `.claude/skills/` (project-specific):
 - `cloudflare/` — Master skill: all Cloudflare products, decision trees, reference library
 - `wrangler/` — Wrangler CLI: deploy, dev, bindings, migrations, testing
 - `workers-best-practices/` — Code review rules, anti-patterns, security, streaming
 - `release/` — Quy trình deploy selfapp lên Cloudflare (8 bước)
 - `debug/` — Debug theo từng layer: FE, REST API, BE, D1, AI SDK, Deploy
+- `hono/` — Hono framework development
+- `shadcn-vue/` — shadcn-vue components
 
-Slash commands tại `.claude/commands/`:
+Slash commands tại `.claude/commands/` (project-specific):
 - `/release` — Triển khai app lên Cloudflare
 - `/debug` — Debug lỗi trong app
 - `/speckit.*` — Feature planning workflow (analyze, clarify, plan, implement, v.v.)
+
+## Copied Plugins (local copies)
+
+Local copies of official plugins. To update, re-copy from source path.
+If a file is removed from the plugin in a newer version, delete the local copy too.
+
+**Update command**: `rsync -a --delete --exclude='node_modules' <source>/ <dest>/`
+
+| Plugin | Version | Source | Local files |
+|--------|---------|--------|-------------|
+| `code-simplifier@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0/` | `agents/code-simplifier.md` |
+| `feature-dev@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/feature-dev/` | `agents/code-architect.md`, `agents/code-explorer.md`, `agents/code-reviewer.md`, `commands/feature-dev.md` |
+| `frontend-design@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/frontend-design/` | `skills/frontend-design/SKILL.md` |
+| `superpowers@claude-plugins-official` | 5.0.1 | `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.1/` | `skills/brainstorming/`, `skills/dispatching-parallel-agents/`, `skills/executing-plans/`, `skills/finishing-a-development-branch/`, `skills/receiving-code-review/`, `skills/requesting-code-review/`, `skills/subagent-driven-development/`, `skills/systematic-debugging/`, `skills/test-driven-development/`, `skills/using-git-worktrees/`, `skills/using-superpowers/`, `skills/verification-before-completion/`, `skills/writing-plans/`, `skills/writing-skills/` |
