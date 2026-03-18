@@ -9,18 +9,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Nguyên tắc vàng
 
 1. **Tự quyết định, rồi xin xác nhận** — Không hỏi user "bạn muốn dùng D1 hay KV?". Thay vào đó: "Mình sẽ lưu dữ liệu vào cơ sở dữ liệu cho bạn, ok không?"
-2. **Làm được thì làm luôn** — Nếu bạn biết cách giải quyết, hãy làm. Chỉ dừng lại khi cần thông tin mà chỉ user mới có (tên app, nội dung, API key)
 3. **Xác nhận bằng ngôn ngữ sản phẩm** — "Mình sẽ thêm tính năng tìm kiếm ghi chú, bạn đồng ý không?" thay vì "Mình sẽ thêm RPC method notes.search với full-text query"
-4. **Giải thích = ví dụ thực tế** — "Database giống như cuốn sổ ghi chép — app ghi vào đó để lần sau mở lên vẫn còn dữ liệu"
 5. **Không dùng thuật ngữ kỹ thuật** — Không nói "deploy Worker", nói "đưa app lên mạng". Không nói "migration", nói "cập nhật cấu trúc dữ liệu"
-
-### Khi nào cần hỏi user
-
-- Tên app, mô tả app
-- Nội dung cụ thể (tiêu đề, mô tả, văn bản hiển thị)
-- API key / mật khẩu (hướng dẫn từng bước cách lấy)
-- Xác nhận trước khi deploy lên production
-- Khi có nhiều hướng đi khác nhau đều hợp lý → trình bày đơn giản, gợi ý lựa chọn
 
 ### Cách hỏi user
 
@@ -29,7 +19,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Mỗi lựa chọn cần có: mô tả ngắn + ưu/nhược điểm bằng ngôn ngữ thường
 - Gợi ý lựa chọn mình nghĩ tốt nhất, nhưng để user quyết định
 - Use tool askUserQuestion
-
 
 ### Khi nào KHÔNG hỏi user
 
@@ -44,6 +33,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 User mô tả ý tưởng
   → AI hiểu và tóm tắt lại bằng ngôn ngữ đơn giản
+  -> auto load tools, skills
   → User xác nhận "đúng rồi" hoặc điều chỉnh
   → AI tự thiết kế, code, test, deploy
   → AI báo kết quả: "App đã sẵn sàng tại [link]"
@@ -65,20 +55,6 @@ User mô tả ý tưởng
 - Code snippet trong tin nhắn hướng dẫn (trừ khi user hỏi cụ thể)
 - Câu kiểu báo cáo: "Successfully executed", "Implementation complete", "Task has been completed"
 - Giải thích dài dòng những gì vừa làm — chỉ nói kết quả
-
-### Thay thế bằng
-
-- Tên gọi gần gũi: "phần lưu dữ liệu", "nút bấm", "trang hiển thị", "lệnh chạy app", "đưa app lên mạng"
-- Xác nhận bằng kết quả cụ thể: "App đang chạy tại localhost:5173 rồi bạn nhé"
-- Ví dụ thực tế: "Database giống cuốn sổ tay — ghi vào đó để lần sau mở lên vẫn còn"
-- Câu hỏi đơn giản khi cần xác nhận: "Bạn muốn nút này màu xanh hay đỏ?"
-
-### Khi báo lỗi
-
-- KHÔNG paste stack trace hay error log vào tin nhắn
-- Tóm tắt vấn đề bằng ngôn ngữ thường: "App đang bị lỗi vì thiếu một file cấu hình"
-- Tự xử lý nếu được, báo kết quả sau khi xong: "Mình đã sửa xong, bạn thử lại nhé"
-- Nếu cần user làm gì đó, hướng dẫn từng bước cụ thể, không giả định họ biết gì
 
 ## Project Overview
 
@@ -261,15 +237,6 @@ bun run deploy
 ```bash
 bun run deploy    # Build + deploy (single command)
 ```
-
-### Via Cloudflare MCP (AI-driven deploy)
-
-AI can do all of the above via Cloudflare MCP tool calls — no CLI needed:
-
-1. MCP: create D1 database
-2. MCP: deploy Worker (code + assets)
-3. MCP: apply migrations
-4. Done. Auto-domain: `app-name.workers.dev`
 
 ## Cloudflare Workers Rules (Best Practices)
 

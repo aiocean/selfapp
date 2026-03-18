@@ -3,11 +3,27 @@ import { onMounted, ref } from 'vue'
 import { useNotes } from './composables/useNotes'
 import NoteList from './components/NoteList.vue'
 import NoteEditor from './components/NoteEditor.vue'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './components/ui/alert-dialog'
+import { Checkbox } from './components/ui/checkbox'
 import type { Note } from '@shared/types'
+
+const SKIP_DELETE_CONFIRM_KEY = 'selfapp-skip-delete-confirm'
 
 const { notes, loading, fetchNotes, createNote, updateNote, deleteNote } = useNotes()
 const selectedNote = ref<Note | null>(null)
 const searchQuery = ref('')
+const deleteDialogOpen = ref(false)
+const pendingDeleteId = ref<string | null>(null)
+const rememberChoice = ref(false)
 
 onMounted(() => fetchNotes())
 
@@ -22,9 +38,27 @@ async function onSave(data: { title: string; content: string }) {
   selectedNote.value = updated
 }
 
-async function onDelete(id: string) {
-  await deleteNote(id)
-  if (selectedNote.value?.id === id) selectedNote.value = null
+function onDeleteRequest(id: string) {
+  const skipConfirm = localStorage.getItem(SKIP_DELETE_CONFIRM_KEY) === 'true'
+  if (skipConfirm) {
+    confirmDelete(id)
+    return
+  }
+  pendingDeleteId.value = id
+  rememberChoice.value = false
+  deleteDialogOpen.value = true
+}
+
+async function confirmDelete(id?: string) {
+  const targetId = id ?? pendingDeleteId.value
+  if (!targetId) return
+  if (rememberChoice.value) {
+    localStorage.setItem(SKIP_DELETE_CONFIRM_KEY, 'true')
+  }
+  await deleteNote(targetId)
+  if (selectedNote.value?.id === targetId) selectedNote.value = null
+  pendingDeleteId.value = null
+  deleteDialogOpen.value = false
 }
 
 async function onSearch() {
@@ -87,7 +121,7 @@ async function onSearch() {
         :selected-id="selectedNote?.id"
         :loading="loading"
         @select="selectedNote = $event"
-        @delete="onDelete"
+        @delete="onDeleteRequest"
       />
     </div>
 
@@ -168,5 +202,30 @@ async function onSearch() {
         </button>
       </div>
     </div>
+
+    <!-- Delete confirmation dialog -->
+    <AlertDialog v-model:open="deleteDialogOpen">
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Xóa ghi chú này?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Ghi chú sẽ bị xóa vĩnh viễn và không thể khôi phục.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <label class="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+          <Checkbox v-model:checked="rememberChoice" />
+          Không hỏi lại
+        </label>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Huỷ</AlertDialogCancel>
+          <AlertDialogAction
+            class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            @click="confirmDelete()"
+          >
+            Xóa
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   </div>
 </template>

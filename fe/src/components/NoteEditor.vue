@@ -34,6 +34,17 @@ const createdDate = computed(() => {
   })
 })
 
+function downloadAsMarkdown() {
+  const md = `# ${title.value || 'Untitled'}\n\n${content.value}`
+  const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `${(title.value || 'untitled').replace(/[/\\?%*:|"<>]/g, '-')}.md`
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function scheduleAutoSave() {
   saving.value = true
   if (saveTimer) clearTimeout(saveTimer)
@@ -69,6 +80,17 @@ function scheduleAutoSave() {
           />
           {{ saving ? 'Saving...' : 'Saved' }}
         </span>
+        <span class="w-0.5 h-0.5 rounded-full bg-muted-foreground/20" />
+        <button
+          @click="downloadAsMarkdown"
+          class="hover:text-foreground/60 transition-colors duration-200 cursor-pointer flex items-center gap-1"
+          title="Download as Markdown"
+        >
+          <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          Download .md
+        </button>
       </div>
     </div>
 
