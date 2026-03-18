@@ -33,6 +33,7 @@ export default defineConfig({
     },
   },
   server: {
+    forwardConsole: true,
     proxy: {
       '/api': `http://localhost:${process.env.PORT || 8787}`,
     },

@@ -8,3 +8,4 @@ data/
 *.db-wal
 dist/
 config.local.md
+.gitnexus
