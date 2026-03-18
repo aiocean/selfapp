@@ -10,7 +10,7 @@
     "directory": "fe/dist",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*"],
   },
 
   // D1 SQLite database
@@ -19,18 +19,18 @@
       "binding": "DB",
       "database_name": "selfapp-db",
       "database_id": "e321c4f8-795d-4c6e-a6e2-d65856aca778",
-      "migrations_dir": "db/migrations"
-    }
+      "migrations_dir": "db/migrations",
+    },
   ],
 
   // Cron jobs (UTC)
   "triggers": {
-    "crons": ["0 0 * * *"]
+    "crons": ["0 0 * * *"],
   },
 
   // Observability
   "observability": {
     "enabled": true,
-    "head_sampling_rate": 1
-  }
+    "head_sampling_rate": 1,
+  },
 }

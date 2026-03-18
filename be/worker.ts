@@ -17,7 +17,7 @@ export default {
   async scheduled(_event: ScheduledEvent, env: Env, _ctx: ExecutionContext): Promise<void> {
     // Cleanup empty notes older than 7 days
     const result = await env.DB.prepare(
-      "DELETE FROM notes WHERE title = '' AND content = '' AND created_at < datetime('now', '-7 days')"
+      "DELETE FROM notes WHERE title = '' AND content = '' AND created_at < datetime('now', '-7 days')",
     ).run()
 
     if (result.meta.changes > 0) {

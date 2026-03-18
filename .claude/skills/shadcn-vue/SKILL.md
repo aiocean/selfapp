@@ -1,6 +1,6 @@
 ---
 name: shadcn-vue
-description: shadcn-vue for Vue/Nuxt with Reka UI components and Tailwind. Use for accessible UI, Auto Form, data tables, charts, dark mode, MCP server setup, or encountering component imports, Reka UI errors.
+description: shadcn-vue for Vue/Nuxt with Reka UI components and Tailwind v4. Use for accessible UI, Auto Form, data tables, charts, dark mode, or encountering component imports, Reka UI errors. This project uses vite-plus instead of standard vite.
 ---
 
 # shadcn-vue
@@ -41,19 +41,19 @@ npx shadcn-vue@latest init
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from "vite";
-import vue from "@vitejs/plugin-vue";
-import tailwindcss from "@tailwindcss/vite"; // Tailwind v4
-import path from "path";
+import { defineConfig } from 'vite-plus'
+import vue from '@vitejs/plugin-vue'
+import tailwindcss from '@tailwindcss/vite' // Tailwind v4
+import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue(), tailwindcss()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': resolve(__dirname, 'src'),
     },
   },
-});
+})
 ```
 
 #### 4. Add Your First Component
@@ -66,13 +66,13 @@ npx shadcn-vue@latest add button
 
 ## Quick Reference
 
-| Need                    | Command or file                                    |
-| ----------------------- | -------------------------------------------------- |
-| Initialize project      | `npx shadcn-vue@latest init`                       |
-| Add component           | `npx shadcn-vue@latest add button`                 |
-| Add multiple components | `npx shadcn-vue@latest add button card dialog`     |
-| Build registry JSON     | `npx shadcn-vue@latest build`                      |
-| Enable CSS variables    | `components.json` → `tailwind.cssVariables: true`  |
+| Need                    | Command or file                                   |
+| ----------------------- | ------------------------------------------------- |
+| Initialize project      | `npx shadcn-vue@latest init`                      |
+| Add component           | `npx shadcn-vue@latest add button`                |
+| Add multiple components | `npx shadcn-vue@latest add button card dialog`    |
+| Build registry JSON     | `npx shadcn-vue@latest build`                     |
+| Enable CSS variables    | `components.json` → `tailwind.cssVariables: true` |
 
 ---
 
@@ -202,6 +202,16 @@ Override CSS variables in your global CSS:
   /* ... */
 }
 ```
+
+---
+
+## Gotchas
+
+- **Reka UI v2 breaking changes from Radix Vue**: shadcn-vue migrated from Radix Vue to Reka UI. Old `<Radix*>` component names won't work. Use the Reka UI equivalents.
+- **`tw-animate-css` needs explicit import**: Add `@import "tw-animate-css"` in your main CSS file, it's not auto-included.
+- **This project uses `vite-plus`**: Import `defineConfig` from `vite-plus`, not from `vite`. The `vite` package is aliased to `@voidzero-dev/vite-plus-core` via overrides in package.json.
+- **Tailwind v4 uses CSS-first config**: No `tailwind.config.js` needed. Use `@tailwindcss/vite` plugin and configure via CSS `@theme` directive.
+- **`components.json` style is permanent**: Choosing "New York" vs "Default" style during `init` cannot be changed without reinitializing. Choose carefully.
 
 ---
 

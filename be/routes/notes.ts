@@ -12,25 +12,22 @@ app.get('/', async (c) => {
 
   if (query) {
     const { results } = await db
-      .prepare('SELECT * FROM notes WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY updated_at DESC')
+      .prepare(
+        'SELECT * FROM notes WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY updated_at DESC',
+      )
       .bind(`%${query}%`)
       .all<Note>()
     return c.json(results)
   }
 
-  const { results } = await db
-    .prepare('SELECT * FROM notes ORDER BY updated_at DESC')
-    .all<Note>()
+  const { results } = await db.prepare('SELECT * FROM notes ORDER BY updated_at DESC').all<Note>()
   return c.json(results)
 })
 
 // GET /api/notes/:id — get single note
 app.get('/:id', async (c) => {
   const id = c.req.param('id')
-  const note = await c.env.DB
-    .prepare('SELECT * FROM notes WHERE id = ?')
-    .bind(id)
-    .first<Note>()
+  const note = await c.env.DB.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
 
   if (!note) return c.json({ error: 'Note not found' }, 404)
   return c.json(note)
@@ -47,10 +44,7 @@ app.post('/', async (c) => {
     .bind(id, title, content)
     .run()
 
-  const note = await db
-    .prepare('SELECT * FROM notes WHERE id = ?')
-    .bind(id)
-    .first<Note>()
+  const note = await db.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
 
   return c.json(note!, 201)
 })
@@ -63,8 +57,14 @@ app.put('/:id', async (c) => {
 
   const sets: string[] = []
   const params: any[] = []
-  if (title !== undefined) { sets.push('title = ?'); params.push(title) }
-  if (content !== undefined) { sets.push('content = ?'); params.push(content) }
+  if (title !== undefined) {
+    sets.push('title = ?')
+    params.push(title)
+  }
+  if (content !== undefined) {
+    sets.push('content = ?')
+    params.push(content)
+  }
   sets.push("updated_at = datetime('now')")
   params.push(id)
 
@@ -73,10 +73,7 @@ app.put('/:id', async (c) => {
     .bind(...params)
     .run()
 
-  const note = await db
-    .prepare('SELECT * FROM notes WHERE id = ?')
-    .bind(id)
-    .first<Note>()
+  const note = await db.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
 
   if (!note) return c.json({ error: 'Note not found' }, 404)
   return c.json(note)
@@ -85,10 +82,7 @@ app.put('/:id', async (c) => {
 // DELETE /api/notes/:id — delete note
 app.delete('/:id', async (c) => {
   const id = c.req.param('id')
-  await c.env.DB
-    .prepare('DELETE FROM notes WHERE id = ?')
-    .bind(id)
-    .run()
+  await c.env.DB.prepare('DELETE FROM notes WHERE id = ?').bind(id).run()
 
   return c.body(null, 204)
 })

@@ -18,7 +18,7 @@ AI viết code được rồi. Ai cũng biết.
 
 Không phải vì code dở. Mà vì không ai nói cho họ biết **sau khi code xong thì làm gì**.
 
-> *"Tôi nhờ ChatGPT làm app ghi chi tiêu. Chạy ngon lắm. Rồi tôi tắt trình duyệt — mất sạch."*
+> _"Tôi nhờ ChatGPT làm app ghi chi tiêu. Chạy ngon lắm. Rồi tôi tắt trình duyệt — mất sạch."_
 
 Đây là câu chuyện của mọi người không biết lập trình khi thử tự tạo app bằng AI. Họ đều đâm vào 3 bức tường:
 
@@ -26,7 +26,7 @@ Không phải vì code dở. Mà vì không ai nói cho họ biết **sau khi co
 2. **Không hình dung được phần mềm hoạt động như thế nào** — nên khi hỏng thì bó tay
 3. **Không biết cách vận hành app** — đưa lên mạng, giữ cho chạy, sao lưu dữ liệu, thêm tính năng
 
-Các công cụ "vibe coding" giải quyết được bước zero: *tạo ra code*. Họ bỏ qua bước một đến bước ba — những bước quyết định app của bạn có sống được hay không.
+Các công cụ "vibe coding" giải quyết được bước zero: _tạo ra code_. Họ bỏ qua bước một đến bước ba — những bước quyết định app của bạn có sống được hay không.
 
 ---
 
@@ -36,7 +36,7 @@ Chúng tôi tin vào một ý tưởng đơn giản:
 
 > **Ai cũng xứng đáng có phần mềm vừa vặn với cuộc sống mình — không chỉ người biết code.**
 
-Không phải template có sẵn trên app store. Không phải công cụ kéo thả với 47 giới hạn. Mà là một app *thật*, xây riêng cho bạn, chạy trên internet, lưu dữ liệu an toàn, và lớn lên cùng bạn.
+Không phải template có sẵn trên app store. Không phải công cụ kéo thả với 47 giới hạn. Mà là một app _thật_, xây riêng cho bạn, chạy trên internet, lưu dữ liệu an toàn, và lớn lên cùng bạn.
 
 Thứ thiếu chưa bao giờ là khả năng viết code của AI. Mà là **mọi thứ xung quanh code** — hạ tầng, triển khai, vận hành, và cách AI giao tiếp với con người.
 
@@ -75,15 +75,15 @@ Khác biệt? **AI không bỏ đi sau khi xây xong.** Nó ở lại làm quả
 
 Bạn không cần mô tả. AI sẽ chủ động phỏng vấn bạn — hỏi từng câu cụ thể, cho sẵn lựa chọn thay vì bắt bạn viết spec. Sau 3-4 câu, AI tạo bản nháp luôn. Bạn nhìn cái có sẵn rồi góp ý — dễ hơn nhiều so với tưởng tượng từ con số không.
 
-> *Giống như nặn đất sét — bắt đầu từ cục đất rồi chỉnh dần, không phải vẽ bản kỹ thuật.*
+> _Giống như nặn đất sét — bắt đầu từ cục đất rồi chỉnh dần, không phải vẽ bản kỹ thuật._
 
 **Vấn đề 2: "Tôi không hiểu phần mềm hoạt động thế nào"**
 
 Bạn không cần hiểu — cho đến khi cần. selfapp dùng nguyên tắc **giải thích đúng lúc**: AI chỉ giải thích khi bạn gặp vấn đề thực tế, bằng ngôn ngữ đời thường.
 
-| Khi bạn hỏi... | AI giải thích thế này |
-|---|---|
-| "Sao dữ liệu mất rồi?" | "App đang ghi lên bảng trắng — tắt đi là xoá. Mình chuyển sang ghi vào sổ — tắt mở vẫn còn. Làm luôn nhé?" |
+| Khi bạn hỏi...                       | AI giải thích thế này                                                                                           |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
+| "Sao dữ liệu mất rồi?"               | "App đang ghi lên bảng trắng — tắt đi là xoá. Mình chuyển sang ghi vào sổ — tắt mở vẫn còn. Làm luôn nhé?"      |
 | "Sao bạn tôi mở link mà không thấy?" | "App đang chạy trong máy bạn thôi — giống nấu ăn trong bếp nhà mình. Mình đưa lên mạng để ai cũng mở được nhé?" |
 
 Không thuật ngữ. Không bài giảng. Chỉ có câu trả lời đúng lúc bạn cần.
@@ -92,12 +92,12 @@ Không thuật ngữ. Không bài giảng. Chỉ có câu trả lời đúng lú
 
 Hạ tầng selfapp tự lo phần vận hành:
 
-| Việc gì | Xử lý thế nào |
-|---|---|
-| **Đưa lên mạng** | AI triển khai app toàn cầu bằng một thao tác. Bạn có link ngay. |
-| **Dữ liệu** | Lưu trong cơ sở dữ liệu được quản lý. Không có chuyện "tắt tab mất hết". |
-| **Cập nhật** | Nói cho AI bạn muốn thay đổi gì. Nó cập nhật mà không phá cái cũ. |
-| **Theo dõi** | Một trang trạng thái đơn giản: "App đang chạy. 1.234 bản ghi. Cập nhật hôm qua." |
+| Việc gì          | Xử lý thế nào                                                                    |
+| ---------------- | -------------------------------------------------------------------------------- |
+| **Đưa lên mạng** | AI triển khai app toàn cầu bằng một thao tác. Bạn có link ngay.                  |
+| **Dữ liệu**      | Lưu trong cơ sở dữ liệu được quản lý. Không có chuyện "tắt tab mất hết".         |
+| **Cập nhật**     | Nói cho AI bạn muốn thay đổi gì. Nó cập nhật mà không phá cái cũ.                |
+| **Theo dõi**     | Một trang trạng thái đơn giản: "App đang chạy. 1.234 bản ghi. Cập nhật hôm qua." |
 
 ---
 
@@ -121,22 +121,22 @@ selfapp/
 
 ### Công nghệ
 
-| Lớp | Công nghệ | Lý do |
-|---|---|---|
-| **Nền tảng** | Cloudflare Workers | Triển khai toàn cầu, gần như miễn phí, AI deploy qua MCP |
-| **Giao diện** | Vue 3 + Tailwind + shadcn-vue | Hiện đại, nhanh, đẹp mặc định |
-| **Xử lý** | Hono | Nhẹ, chạy native trên Workers, TypeScript |
-| **Dữ liệu** | D1 (SQLite được quản lý) | Không cần cấu hình, tự sao lưu, 10GB miễn phí |
-| **Ngôn ngữ** | TypeScript | An toàn kiểu dữ liệu xuyên suốt |
-| **AI** | Claude Code + Skills | AI đọc template và biết chính xác cách xây |
+| Lớp           | Công nghệ                     | Lý do                                                    |
+| ------------- | ----------------------------- | -------------------------------------------------------- |
+| **Nền tảng**  | Cloudflare Workers            | Triển khai toàn cầu, gần như miễn phí, AI deploy qua MCP |
+| **Giao diện** | Vue 3 + Tailwind + shadcn-vue | Hiện đại, nhanh, đẹp mặc định                            |
+| **Xử lý**     | Hono                          | Nhẹ, chạy native trên Workers, TypeScript                |
+| **Dữ liệu**   | D1 (SQLite được quản lý)      | Không cần cấu hình, tự sao lưu, 10GB miễn phí            |
+| **Ngôn ngữ**  | TypeScript                    | An toàn kiểu dữ liệu xuyên suốt                          |
+| **AI**        | Claude Code + Skills          | AI đọc template và biết chính xác cách xây               |
 
 ### Tại sao Cloudflare Workers?
 
-| Nền tảng | Số bước triển khai | Cách gọi | Chi phí |
-|---|---|---|---|
-| **Cloudflare Workers** | **2-3** | **MCP (công cụ AI native)** | **~0đ cho app cá nhân** |
-| Railway | 4-5 | REST API | Cao hơn |
-| Fly.io | 6-7 | CLI + API | Phức tạp nhất |
+| Nền tảng               | Số bước triển khai | Cách gọi                    | Chi phí                 |
+| ---------------------- | ------------------ | --------------------------- | ----------------------- |
+| **Cloudflare Workers** | **2-3**            | **MCP (công cụ AI native)** | **~0đ cho app cá nhân** |
+| Railway                | 4-5                | REST API                    | Cao hơn                 |
+| Fly.io                 | 6-7                | CLI + API                   | Phức tạp nhất           |
 
 AI có thể triển khai selfapp bằng một lệnh duy nhất. Không cần terminal, không cần file cấu hình, không cần biết DevOps. Đó là toàn bộ ý nghĩa.
 
@@ -169,7 +169,7 @@ bun run dev
 
 Mở Claude Code và nói bạn muốn gì:
 
-> *"Tôi muốn app ghi chi tiêu hàng ngày. Ghi nhanh số tiền và mua gì, cuối tuần xem lại tổng kết."*
+> _"Tôi muốn app ghi chi tiêu hàng ngày. Ghi nhanh số tiền và mua gì, cuối tuần xem lại tổng kết."_
 
 AI lo phần còn lại.
 
@@ -179,7 +179,7 @@ AI lo phần còn lại.
 bun run deploy
 ```
 
-Hoặc nói với AI: *"Đưa app lên mạng giúp mình."*
+Hoặc nói với AI: _"Đưa app lên mạng giúp mình."_
 
 ---
 
@@ -187,7 +187,7 @@ Hoặc nói với AI: *"Đưa app lên mạng giúp mình."*
 
 selfapp không chỉ là template. Nó là một hệ niềm tin:
 
-1. **Phần mềm nên là thứ cá nhân.** App tốt nhất để theo dõi thói quen *của bạn* là app được xây cho thói quen *của bạn* — không phải app chung chung với đống tính năng bạn không bao giờ dùng.
+1. **Phần mềm nên là thứ cá nhân.** App tốt nhất để theo dõi thói quen _của bạn_ là app được xây cho thói quen _của bạn_ — không phải app chung chung với đống tính năng bạn không bao giờ dùng.
 
 2. **AI nên là kỹ sư, không phải máy tạo code.** Xây dựng chỉ chiếm 30% công việc. Vận hành, bảo trì và phát triển chiếm 70% còn lại. AI phải lo trọn vẹn vòng đời.
 

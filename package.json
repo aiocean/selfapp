@@ -3,20 +3,28 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "bun run dev:be & bun run dev:fe && wait",
+    "dev:be": "wrangler dev",
     "dev:fe": "bun run --cwd fe dev",
     "build": "bun run --cwd fe build",
     "deploy": "bun run build && wrangler deploy",
     "db:create": "wrangler d1 create selfapp-db",
     "db:migrate": "wrangler d1 migrations apply selfapp-db --local",
-    "db:migrate:prod": "wrangler d1 migrations apply selfapp-db --remote"
-  },
-  "devDependencies": {
-    "@types/node": "^25.5.0",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.74.0"
+    "db:migrate:prod": "wrangler d1 migrations apply selfapp-db --remote",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt .",
+    "fmt:check": "oxfmt --check .",
+    "check": "oxlint && oxfmt --check ."
   },
   "dependencies": {
     "hono": "^4.12.8"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "oxfmt": "^0.41.0",
+    "oxlint": "^1.56.0",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.74.0"
   }
 }

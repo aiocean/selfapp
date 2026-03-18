@@ -22,6 +22,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Xác nhận trước khi deploy lên production
 - Khi có nhiều hướng đi khác nhau đều hợp lý → trình bày đơn giản, gợi ý lựa chọn
 
+### Cách hỏi user
+
+- **LUÔN đưa ra ít nhất 2 lựa chọn** kèm giải thích đơn giản — KHÔNG BAO GIỜ hỏi câu mở kiểu "bạn muốn gì?" hay "bạn chọn cách nào?"
+- User không biết kỹ thuật nhưng **rất giỏi đưa ra quyết định** nếu được cung cấp đủ thông tin
+- Mỗi lựa chọn cần có: mô tả ngắn + ưu/nhược điểm bằng ngôn ngữ thường
+- Gợi ý lựa chọn mình nghĩ tốt nhất, nhưng để user quyết định
+- Ví dụ đúng: "Mình thấy có 2 cách: (A) Lưu ảnh trực tiếp trong app — nhanh gọn nhưng tốn dung lượng. (B) Lưu link ảnh từ bên ngoài — nhẹ hơn nhưng ảnh có thể mất nếu nguồn xoá. Mình gợi ý cách A. Bạn chọn cái nào?"
+- Ví dụ sai: "Bạn muốn dùng R2 hay lưu base64 trong D1?"
+
 ### Khi nào KHÔNG hỏi user
 
 - Chọn tech stack, library, pattern
@@ -43,12 +52,14 @@ User mô tả ý tưởng
 ## Output Style — Viết cho người không biết lập trình
 
 ### Giọng văn
+
 - Thân thiện, ngắn gọn, như đang nhắn tin với bạn bè
 - Dùng "mình" / "bạn", không dùng "tôi" / "user"
 - Câu ngắn. Tránh câu phức nhiều mệnh đề.
 - Xưng hô nhất quán, tự nhiên suốt cuộc trò chuyện
 
 ### Tuyệt đối KHÔNG dùng
+
 - Thuật ngữ kỹ thuật không giải thích: API, RPC, migration, deploy, handler, composable, endpoint, Worker, binding, D1, KV...
 - Bullet list dày đặc kiểu tài liệu kỹ thuật
 - Code snippet trong tin nhắn hướng dẫn (trừ khi user hỏi cụ thể)
@@ -56,12 +67,14 @@ User mô tả ý tưởng
 - Giải thích dài dòng những gì vừa làm — chỉ nói kết quả
 
 ### Thay thế bằng
+
 - Tên gọi gần gũi: "phần lưu dữ liệu", "nút bấm", "trang hiển thị", "lệnh chạy app", "đưa app lên mạng"
 - Xác nhận bằng kết quả cụ thể: "App đang chạy tại localhost:5173 rồi bạn nhé"
 - Ví dụ thực tế: "Database giống cuốn sổ tay — ghi vào đó để lần sau mở lên vẫn còn"
 - Câu hỏi đơn giản khi cần xác nhận: "Bạn muốn nút này màu xanh hay đỏ?"
 
 ### Khi báo lỗi
+
 - KHÔNG paste stack trace hay error log vào tin nhắn
 - Tóm tắt vấn đề bằng ngôn ngữ thường: "App đang bị lỗi vì thiếu một file cấu hình"
 - Tự xử lý nếu được, báo kết quả sau khi xong: "Mình đã sửa xong, bạn thử lại nhé"
@@ -113,12 +126,12 @@ template/
 
 ### REST API (Hono)
 
-`shared/types.ts` defines data models (`Note`, `CreateNote`, `UpdateNote`). BE mounts Hono route groups in `be/worker.ts`, with route handlers in `be/routes/notes.ts`. FE calls via the `api` object in `fe/src/composables/useApi.ts` using standard HTTP methods. REST endpoints: `GET /api/notes`, `GET /api/notes/:id`, `POST /api/notes`, `PUT /api/notes/:id`, `DELETE /api/notes/:id`.
+`shared/types.ts` defines data models (`Note`, `CreateNote`, `UpdateNote`). BE mounts Hono route groups in `be/worker.ts`, with route handlers in `be/routes/notes.ts`. FE calls via named methods on the `api` object in `fe/src/composables/useApi.ts` (e.g. `api.notesList()`, `api.notesCreate(input)`, `api.notesUpdate(id, input)`, `api.notesDelete(id)`). REST endpoints: `GET /api/notes`, `GET /api/notes/:id`, `POST /api/notes`, `PUT /api/notes/:id`, `DELETE /api/notes/:id`.
 
 ### Data Flow
 
 ```
-FE composable → api.get/post/put/delete('/api/notes') → Hono router → route handler(c, db) → D1 → response
+FE composable → api.notesList/Create/Update/Delete() → fetch('/api/notes/...') → Hono router → route handler(c) → c.env.DB → D1 → c.json(result)
 ```
 
 ### Static Assets + API Routing
@@ -127,12 +140,19 @@ FE composable → api.get/post/put/delete('/api/notes') → Hono router → rout
 
 ### Dev Mode
 
-- `wrangler dev` — runs Worker locally with local D1 + static assets
-- `bun run dev:fe` — Vite dev server with HMR, proxies `/api` to `localhost:8787`
+- `bun run dev` — runs BE (wrangler dev) + FE (vite-plus dev) concurrently
+- `bun run dev:be` — Worker only with local D1 + static assets (port 8787)
+- `bun run dev:fe` — Vite-plus dev server with HMR (proxies `/api` to `localhost:8787`)
 
 ### Production
 
 Single `wrangler deploy` — Worker + static assets + D1 + cron, deployed globally to Cloudflare edge.
+
+### FE Tooling: vite-plus
+
+FE uses `vite-plus` (aliased as `vite` via package.json overrides), NOT standard Vite. CLI commands use `vp` instead of `vite`:
+- `vp dev`, `vp build`, `vp preview`, `vp check`, `vp test`, `vp fmt`
+- Path alias: `@shared/*` → `./shared/*` (configured in root `tsconfig.json`, used in FE imports like `import type { Note } from '@shared/types'`)
 
 ## Commands
 
@@ -152,6 +172,13 @@ bun run deploy           # Build FE + deploy Worker to Cloudflare
 bun run db:create        # Create D1 database (first time only)
 bun run db:migrate:prod  # Apply migrations to production D1
 
+# Lint & Format (oxlint + oxfmt)
+bun run lint             # Lint with oxlint
+bun run lint:fix         # Lint and auto-fix
+bun run fmt              # Format with oxfmt
+bun run fmt:check        # Check formatting without writing
+bun run check            # Run both lint + format check
+
 # Types (run after changing wrangler.jsonc)
 bunx wrangler types      # Regenerate worker-configuration.d.ts
 ```
@@ -159,9 +186,9 @@ bunx wrangler types      # Regenerate worker-configuration.d.ts
 ## Adding a New API Endpoint
 
 1. Add or update types in `shared/types.ts` (request/response shapes)
-2. Add route handler in `be/routes/` — handler signature: `async (c: Context) => Response`
+2. Add route handler in `be/routes/` — use Hono context helpers (`c.json()`, `c.body()`, `c.env.DB`)
 3. Mount the route in `be/worker.ts` Hono app
-4. Call from FE via the `api` object in `fe/src/composables/useApi.ts` with the appropriate HTTP method
+4. Add a named method to the `api` object in `fe/src/composables/useApi.ts` (e.g. `api.newMethod()`)
 
 ## Adding a Cron Job
 
@@ -224,6 +251,7 @@ bun run deploy    # Build + deploy (single command)
 ### Via Cloudflare MCP (AI-driven deploy)
 
 AI can do all of the above via Cloudflare MCP tool calls — no CLI needed:
+
 1. MCP: create D1 database
 2. MCP: deploy Worker (code + assets)
 3. MCP: apply migrations
@@ -232,6 +260,7 @@ AI can do all of the above via Cloudflare MCP tool calls — no CLI needed:
 ## Cloudflare Workers Rules (Best Practices)
 
 ### MUST DO
+
 - Use `wrangler.jsonc` (NOT toml) — jsonc supports newer features
 - Run `bunx wrangler types` after changing `wrangler.jsonc` — regenerates `Env` type
 - Set `compatibility_date` to a recent date
@@ -241,6 +270,7 @@ AI can do all of the above via Cloudflare MCP tool calls — no CLI needed:
 - Use `ctx.waitUntil()` for post-response background work
 
 ### MUST NOT
+
 - Never destructure `ctx` (`const { waitUntil } = ctx` → throws "Illegal invocation")
 - Never hand-write `Env` interface — always generate with `wrangler types`
 - Never use module-level mutable state — request-scoped state leaks between requests
@@ -251,15 +281,18 @@ AI can do all of the above via Cloudflare MCP tool calls — no CLI needed:
 ## Adding R2 File Storage (when needed)
 
 1. Add to `wrangler.jsonc`:
+
 ```jsonc
 "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "selfapp-files" }]
 ```
+
 2. Run `bunx wrangler types` to update Env
 3. Use in handlers:
+
 ```typescript
 // Upload
 await env.BUCKET.put(key, request.body, {
-  httpMetadata: { contentType: 'image/png' }
+  httpMetadata: { contentType: 'image/png' },
 })
 
 // Download
@@ -274,18 +307,31 @@ return new Response(object.body, { headers })
 ## Installed Skills & Commands
 
 Skills tại `.claude/skills/` (project-specific):
+
+- `setup/` — Cài đặt mọi thứ để chạy app trên máy (bun, packages, database)
+- `release/` — Quy trình deploy selfapp lên Cloudflare (8 bước)
+- `debug/` — Debug theo từng layer: FE, REST API, BE, D1, AI SDK, Deploy
 - `cloudflare/` — Master skill: all Cloudflare products, decision trees, reference library
 - `wrangler/` — Wrangler CLI: deploy, dev, bindings, migrations, testing
 - `workers-best-practices/` — Code review rules, anti-patterns, security, streaming
-- `release/` — Quy trình deploy selfapp lên Cloudflare (8 bước)
-- `debug/` — Debug theo từng layer: FE, REST API, BE, D1, AI SDK, Deploy
 - `hono/` — Hono framework development
 - `shadcn-vue/` — shadcn-vue components
 
 Slash commands tại `.claude/commands/` (project-specific):
+
+- `/setup` — Cài đặt công cụ và chuẩn bị chạy app
 - `/release` — Triển khai app lên Cloudflare
 - `/debug` — Debug lỗi trong app
 - `/speckit.*` — Feature planning workflow (analyze, clarify, plan, implement, v.v.)
+
+### Tự cải thiện skill trong quá trình làm việc
+
+Khi làm việc với project, AI nên **chủ động cập nhật skill** dựa trên kinh nghiệm thực tế:
+
+- **Gotchas**: Khi gặp lỗi bất ngờ hoặc edge case mà skill chưa đề cập, thêm vào mục `## Gotchas` trong SKILL.md tương ứng. Mỗi gotcha gồm: triệu chứng + nguyên nhân + cách xử lý.
+- **Config**: Một số skill hỗ trợ file `config.local.md` (gitignored) để lưu thông tin riêng theo project — ví dụ URL production, database name, account ID. AI nên tự tạo và cập nhật file config này khi có thông tin mới, để lần sau không cần hỏi lại.
+
+Ví dụ: sau khi deploy lần đầu, AI tự lưu URL production vào `.claude/skills/release/config.local.md` để lần deploy sau biết kiểm tra endpoint nào.
 
 ## Copied Plugins (local copies)
 
@@ -294,9 +340,9 @@ If a file is removed from the plugin in a newer version, delete the local copy t
 
 **Update command**: `rsync -a --delete --exclude='node_modules' <source>/ <dest>/`
 
-| Plugin | Version | Source | Local files |
-|--------|---------|--------|-------------|
-| `code-simplifier@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0/` | `agents/code-simplifier.md` |
-| `feature-dev@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/feature-dev/` | `agents/code-architect.md`, `agents/code-explorer.md`, `agents/code-reviewer.md`, `commands/feature-dev.md` |
-| `frontend-design@claude-plugins-official` | 1.0.0 | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/frontend-design/` | `skills/frontend-design/SKILL.md` |
-| `superpowers@claude-plugins-official` | 5.0.1 | `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.1/` | `skills/brainstorming/`, `skills/dispatching-parallel-agents/`, `skills/executing-plans/`, `skills/finishing-a-development-branch/`, `skills/receiving-code-review/`, `skills/requesting-code-review/`, `skills/subagent-driven-development/`, `skills/systematic-debugging/`, `skills/test-driven-development/`, `skills/using-git-worktrees/`, `skills/using-superpowers/`, `skills/verification-before-completion/`, `skills/writing-plans/`, `skills/writing-skills/` |
+| Plugin                                    | Version | Source                                                                            | Local files                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| ----------------------------------------- | ------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `code-simplifier@claude-plugins-official` | 1.0.0   | `~/.claude/plugins/cache/claude-plugins-official/code-simplifier/1.0.0/`          | `agents/code-simplifier.md`                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| `feature-dev@claude-plugins-official`     | 1.0.0   | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/feature-dev/`     | `agents/code-architect.md`, `agents/code-explorer.md`, `agents/code-reviewer.md`, `commands/feature-dev.md`                                                                                                                                                                                                                                                                                                                                                               |
+| `frontend-design@claude-plugins-official` | 1.0.0   | `~/.claude/plugins/marketplaces/claude-plugins-official/plugins/frontend-design/` | `skills/frontend-design/SKILL.md`                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `superpowers@claude-plugins-official`     | 5.0.1   | `~/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.1/`              | `skills/brainstorming/`, `skills/dispatching-parallel-agents/`, `skills/executing-plans/`, `skills/finishing-a-development-branch/`, `skills/receiving-code-review/`, `skills/requesting-code-review/`, `skills/subagent-driven-development/`, `skills/systematic-debugging/`, `skills/test-driven-development/`, `skills/using-git-worktrees/`, `skills/using-superpowers/`, `skills/verification-before-completion/`, `skills/writing-plans/`, `skills/writing-skills/` |

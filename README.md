@@ -16,9 +16,9 @@ AI can write code now. That's not news.
 
 What's news is that **millions of people** are using AI to "vibe code" their own apps — expense trackers, habit journals, team dashboards, personal CRMs. And most of those apps **die within a week**.
 
-Not because the code was bad. Because nobody told them what happens *after* the code is written.
+Not because the code was bad. Because nobody told them what happens _after_ the code is written.
 
-> *"I asked ChatGPT to build me an expense tracker. It worked great on my laptop. Then I closed the tab and everything was gone."*
+> _"I asked ChatGPT to build me an expense tracker. It worked great on my laptop. Then I closed the tab and everything was gone."_
 
 This is the story of every non-technical person who tried to build something with AI. They hit the same three walls:
 
@@ -26,7 +26,7 @@ This is the story of every non-technical person who tried to build something wit
 2. **They have no mental model of how software works** — so when things break, they're lost
 3. **They don't know how to operate an app** — deploy it, keep it running, back up data, add features later
 
-"Vibe coding" tools solve problem zero: *generating code*. They ignore problems one through three — the ones that actually determine whether your app survives.
+"Vibe coding" tools solve problem zero: _generating code_. They ignore problems one through three — the ones that actually determine whether your app survives.
 
 ---
 
@@ -36,7 +36,7 @@ We believe in a simple idea:
 
 > **Everyone deserves software that fits their life perfectly — not just people who can code.**
 
-Not a template from an app store. Not a no-code form builder with 47 limitations. A *real* app, built exactly for you, that runs on the internet, stores your data safely, and grows with you over time.
+Not a template from an app store. Not a no-code form builder with 47 limitations. A _real_ app, built exactly for you, that runs on the internet, stores your data safely, and grows with you over time.
 
 The missing piece was never AI's ability to code. It was **everything around the code** — the infrastructure, the deployment, the operations, the communication between AI and human.
 
@@ -75,16 +75,16 @@ The difference? **AI doesn't leave after building.** It stays as your app's care
 
 You don't have to. AI runs a guided interview — asking you specific, multiple-choice questions instead of expecting a detailed spec. After 3-4 questions, it builds a rough draft. You react to something real instead of imagining something abstract.
 
-> *Think of it like sculpting clay — you start with a shape and refine it, not a blueprint.*
+> _Think of it like sculpting clay — you start with a shape and refine it, not a blueprint._
 
 **Problem 2: "I don't understand how software works"**
 
 You don't need to — until you do. selfapp uses **just-in-time education**: AI explains things only when you hit a real problem, using everyday language.
 
-| When you say... | AI explains like this |
-|---|---|
-| "Why did my data disappear?" | "Your app was saving to a whiteboard — wipe it and it's gone. I'll switch it to a notebook — permanent. Want me to fix it now?" |
-| "Why can't my friend see my app?" | "It's running on your computer only — like cooking in your kitchen. I'll put it online so anyone with the link can use it." |
+| When you say...                   | AI explains like this                                                                                                           |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| "Why did my data disappear?"      | "Your app was saving to a whiteboard — wipe it and it's gone. I'll switch it to a notebook — permanent. Want me to fix it now?" |
+| "Why can't my friend see my app?" | "It's running on your computer only — like cooking in your kitchen. I'll put it online so anyone with the link can use it."     |
 
 No jargon. No lectures. Just answers when you need them.
 
@@ -92,12 +92,12 @@ No jargon. No lectures. Just answers when you need them.
 
 selfapp's infrastructure handles operations automatically:
 
-| What | How |
-|---|---|
-| **Deployment** | AI deploys your app globally with one action. You get a link instantly. |
-| **Data safety** | Your data lives in a managed database. No "oops I closed the tab" disasters. |
-| **Updates** | Tell AI what you want changed. It updates without breaking what already works. |
-| **Monitoring** | A simple health page in plain language: "App is running. 1,234 records saved. Last updated yesterday." |
+| What            | How                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------ |
+| **Deployment**  | AI deploys your app globally with one action. You get a link instantly.                                |
+| **Data safety** | Your data lives in a managed database. No "oops I closed the tab" disasters.                           |
+| **Updates**     | Tell AI what you want changed. It updates without breaking what already works.                         |
+| **Monitoring**  | A simple health page in plain language: "App is running. 1,234 records saved. Last updated yesterday." |
 
 ---
 
@@ -121,22 +121,22 @@ selfapp/
 
 ### Tech Stack
 
-| Layer | Technology | Why |
-|---|---|---|
-| **Runtime** | Cloudflare Workers | Global edge deployment, near-zero cost, AI can deploy via MCP |
-| **Frontend** | Vue 3 + Tailwind + shadcn-vue | Modern, fast, beautiful defaults |
-| **Backend** | Hono | Lightweight, Workers-native, TypeScript |
-| **Database** | D1 (managed SQLite) | Zero config, automatic backups, 10GB free |
-| **Language** | TypeScript | End-to-end type safety |
-| **AI** | Claude Code + Skills | AI reads the template and knows exactly how to build |
+| Layer        | Technology                    | Why                                                           |
+| ------------ | ----------------------------- | ------------------------------------------------------------- |
+| **Runtime**  | Cloudflare Workers            | Global edge deployment, near-zero cost, AI can deploy via MCP |
+| **Frontend** | Vue 3 + Tailwind + shadcn-vue | Modern, fast, beautiful defaults                              |
+| **Backend**  | Hono                          | Lightweight, Workers-native, TypeScript                       |
+| **Database** | D1 (managed SQLite)           | Zero config, automatic backups, 10GB free                     |
+| **Language** | TypeScript                    | End-to-end type safety                                        |
+| **AI**       | Claude Code + Skills          | AI reads the template and knows exactly how to build          |
 
 ### Why Cloudflare Workers?
 
-| Platform | Steps to deploy | Method | Cost |
-|---|---|---|---|
-| **Cloudflare Workers** | **2-3** | **MCP (native AI tool)** | **~$0 for personal apps** |
-| Railway | 4-5 | REST API | Higher |
-| Fly.io | 6-7 | CLI + API | Most complex |
+| Platform               | Steps to deploy | Method                   | Cost                      |
+| ---------------------- | --------------- | ------------------------ | ------------------------- |
+| **Cloudflare Workers** | **2-3**         | **MCP (native AI tool)** | **~$0 for personal apps** |
+| Railway                | 4-5             | REST API                 | Higher                    |
+| Fly.io                 | 6-7             | CLI + API                | Most complex              |
 
 AI can deploy a selfapp with a single tool call. No CLI commands, no config files, no DevOps knowledge. That's the whole point.
 
@@ -169,7 +169,7 @@ bun run dev
 
 Then open Claude Code and tell it what you want to build:
 
-> *"I want an app to track my daily expenses. I want to quickly add how much I spent and on what, and see a summary at the end of each week."*
+> _"I want an app to track my daily expenses. I want to quickly add how much I spent and on what, and see a summary at the end of each week."_
 
 AI takes it from there.
 
@@ -179,7 +179,7 @@ AI takes it from there.
 bun run deploy
 ```
 
-Or just tell AI: *"Put my app online."*
+Or just tell AI: _"Put my app online."_
 
 ---
 
@@ -187,7 +187,7 @@ Or just tell AI: *"Put my app online."*
 
 selfapp is not just a template. It's a belief system:
 
-1. **Software should be personal.** The best app for tracking *your* habits is one built for *your* habits — not a generic one with features you'll never use.
+1. **Software should be personal.** The best app for tracking _your_ habits is one built for _your_ habits — not a generic one with features you'll never use.
 
 2. **AI should be an engineer, not a code generator.** Building is 30% of the work. Operating, maintaining, and evolving is the other 70%. AI should own the full lifecycle.
 

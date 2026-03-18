@@ -1,6 +1,6 @@
 ---
 name: release
-description: Deploy selfapp lên Cloudflare Workers — hướng dẫn AI thực hiện toàn bộ quy trình release cho user không biết kỹ thuật
+description: Use when user says "release", "deploy", "publish", "go live", "đưa app lên mạng", "triển khai". Hướng dẫn AI thực hiện toàn bộ quy trình release selfapp lên Cloudflare Workers cho user không biết kỹ thuật.
 ---
 
 # Release SelfApp
@@ -22,6 +22,7 @@ bunx wrangler whoami
 ```
 
 Nếu chưa login:
+
 ```bash
 bunx wrangler login
 ```
@@ -56,11 +57,13 @@ Nếu không có R2 config → bỏ qua.
 Kiểm tra code xem có dùng `env.` nào là secret không (API keys, tokens, v.v.).
 
 Danh sách secrets phổ biến:
+
 - `ANTHROPIC_API_KEY` — nếu dùng Claude AI
 - `GOOGLE_GENERATIVE_AI_API_KEY` — nếu dùng Gemini
 - `OPENAI_API_KEY` — nếu dùng OpenAI
 
 Với mỗi secret cần set:
+
 ```bash
 bunx wrangler secret put <SECRET_NAME>
 ```
@@ -68,6 +71,7 @@ bunx wrangler secret put <SECRET_NAME>
 Thông báo user: "Mình cần bạn dán API key vào terminal. Key này sẽ được lưu an toàn trên Cloudflare, không ai thấy được."
 
 **Kiểm tra secret đã set chưa:**
+
 ```bash
 bunx wrangler secret list
 ```
@@ -88,6 +92,7 @@ bun run build
 ```
 
 Kiểm tra `fe/dist/` được tạo thành công:
+
 ```bash
 ls fe/dist/index.html
 ```
@@ -99,6 +104,7 @@ bunx wrangler deploy
 ```
 
 Hoặc dùng script nếu có:
+
 ```bash
 bun run deploy
 ```
@@ -119,6 +125,7 @@ Thông báo user: "App của bạn đã được triển khai thành công! Truy
 ## Deploy tiếp theo (đã setup rồi)
 
 Chỉ cần chạy:
+
 ```bash
 bun run deploy
 ```
@@ -128,23 +135,36 @@ Một lệnh duy nhất: build frontend + deploy lên Cloudflare.
 ## Xử lý lỗi thường gặp
 
 ### "Not logged in"
+
 ```bash
 bunx wrangler login
 ```
 
 ### "Database not found"
+
 Database chưa được tạo hoặc `database_id` sai. Chạy lại Bước 2.
 
 ### "Missing secret"
+
 Secret chưa được set. Chạy lại Bước 4.
 
 ### Build lỗi
+
 ```bash
 cd fe && bun install && bun run build
 ```
 
 ### "Worker size limit exceeded"
+
 Frontend chưa được build hoặc bundle quá lớn. Kiểm tra `fe/dist/` và optimize nếu cần.
+
+## Gotchas
+
+- **`wrangler deploy` fail thầm nếu `fe/dist/` trống hoặc không tồn tại**: Luôn chạy `bun run build` trước deploy. Kiểm tra `ls fe/dist/index.html` trước khi deploy.
+- **D1 migration order quan trọng**: Mỗi migration file có số thứ tự (001, 002...). KHÔNG BAO GIỜ đổi tên hoặc xoá file migration đã apply. Chỉ thêm file mới.
+- **`compatibility_date` quá cũ gây lỗi runtime**: Nếu gặp lỗi lạ trên production, kiểm tra `compatibility_date` trong `wrangler.jsonc` — nên dùng ngày gần đây (trong vòng 3 tháng).
+- **Deploy lần đầu cần tạo D1 + apply migration TRƯỚC**: Nếu deploy code trước khi tạo database, app sẽ crash ngay lập tức với lỗi "no such table".
+- **Secret chỉ tồn tại trên production**: `wrangler secret put` chỉ set cho production. Local dev dùng file `.dev.vars` (không commit!).
 
 ## Quy trình qua Cloudflare MCP (thay thế CLI)
 
@@ -163,3 +183,21 @@ Nếu có Cloudflare MCP server kết nối, AI có thể deploy hoàn toàn qua
 - Nói "khóa bí mật" thay vì "API key / secret"
 - Khi cần user nhập gì, hướng dẫn cụ thể từng bước
 - Luôn thông báo kết quả cuối cùng kèm URL truy cập
+
+## Config
+
+Nếu project đã deploy, lưu thông tin deployment vào `.claude/skills/release/config.local.md` (file này nằm trong .gitignore):
+
+```yaml
+---
+worker_name: selfapp
+cloudflare_account_id: ""
+custom_domain: ""
+d1_database_name: selfapp-db
+d1_database_id: ""
+r2_bucket_name: ""
+production_url: ""
+---
+```
+
+AI đọc file này để biết thông tin deployment mà không cần hỏi lại user mỗi lần.

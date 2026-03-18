@@ -16,8 +16,7 @@ export const api = {
   notesList: (query?: string) =>
     request<Note[]>(query ? `${BASE}?q=${encodeURIComponent(query)}` : BASE),
 
-  notesGet: (id: string) =>
-    request<Note>(`${BASE}/${id}`),
+  notesGet: (id: string) => request<Note>(`${BASE}/${id}`),
 
   notesCreate: (input: CreateNote) =>
     request<Note>(BASE, {
@@ -33,6 +32,5 @@ export const api = {
       body: JSON.stringify(input),
     }),
 
-  notesDelete: (id: string) =>
-    request<void>(`${BASE}/${id}`, { method: 'DELETE' }),
+  notesDelete: (id: string) => request<void>(`${BASE}/${id}`, { method: 'DELETE' }),
 }

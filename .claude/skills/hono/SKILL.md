@@ -1,6 +1,6 @@
 ---
 name: hono
-description: Efficiently develop Hono applications using Hono CLI. Supports documentation search, API reference lookup, request testing, and bundle optimization.
+description: Use when developing Hono routes, middleware, or API handlers. Supports documentation search, API reference lookup, request testing, and bundle optimization via Hono CLI. Also use when encountering Hono-specific errors (c.env, c.req, middleware chaining).
 ---
 
 # Hono Skill
@@ -88,3 +88,12 @@ hono optimize [entry] -t cloudflare-workers
 - Use `--pretty` flag with `hono search` (default output is JSON)
 - `hono request` works without starting an HTTP server
 - Search for middleware usage with `hono search "middleware name"`
+
+## Gotchas
+
+- **`c.req.json()` consumes body once**: Calling `c.req.json()` twice throws. Store result in a variable: `const body = await c.req.json()`.
+- **`c.env` not available in middleware created outside factory**: Use `createFactory()` from `hono/factory` to get typed `env` in middleware.
+- **Route order matters**: Hono matches routes top-to-bottom. Put specific routes (`/api/notes/:id`) BEFORE catch-all routes (`/api/*`).
+- **`c.json()` sets Content-Type automatically**: Don't manually set `Content-Type: application/json` when using `c.json()`.
+- **Error responses need `c.json()` too**: Don't return `new Response('error')` — use `c.json({ error: 'message' }, 400)` for consistent API responses.
+- **Cloudflare Workers context**: In this project, Hono runs on Cloudflare Workers. Access D1 via `c.env.DB`, not via import. Never use `process.env`.
