@@ -23,16 +23,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Gitleaks
-        uses: jaxxstorm/action-install-gh-release@v2
-        with:
-          repo: gitleaks/gitleaks
-          platform: linux
-          arch: amd64
-
-      - name: Run Gitleaks
+      - name: Install and Run Gitleaks
         id: gitleaks
-        run: gitleaks detect --source . --verbose --exit-code 1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download --repo gitleaks/gitleaks --pattern 'gitleaks_*_linux_amd64.tar.gz' --output gitleaks.tar.gz
+          tar xzf gitleaks.tar.gz gitleaks
+          chmod +x gitleaks
+          ./gitleaks detect --source . --verbose --exit-code 1
 
     outputs:
       leak_found: ${{ steps.gitleaks.outcome == 'failure' }}
