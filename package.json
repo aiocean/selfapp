@@ -2,6 +2,7 @@
   "name": "selfapp",
   "private": true,
   "type": "module",
+  "workspaces": ["fe"],
   "scripts": {
     "dev": "bun run dev:be & bun run dev:fe && wait",
     "dev:be": "wrangler dev",
