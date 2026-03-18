@@ -31,7 +31,7 @@ jobs:
           gh release download --repo gitleaks/gitleaks --pattern 'gitleaks_*_linux_x64.tar.gz' --output gitleaks.tar.gz
           tar xzf gitleaks.tar.gz gitleaks
           chmod +x gitleaks
-          ./gitleaks detect --source . --verbose --exit-code 1
+          ./gitleaks detect --source . --verbose --exit-code 1 --config .gitleaks.toml
 
   trufflehog:
     name: TruffleHog - Deep Secret Scan

@@ -1,0 +1,10 @@
+# Gitleaks config — ignore false positives in documentation/skill files
+[extend]
+
+# Paths to ignore (documentation with example API keys/tokens)
+[allowlist]
+  description = "Ignore placeholder secrets in skill documentation"
+  paths = [
+    '''.claude/skills/cloudflare/references/.*''',
+    '''.claude/skills/workers-best-practices/references/.*''',
+  ]
