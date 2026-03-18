@@ -3,6 +3,7 @@
 ## Problem
 
 selfapp template has 33 skills and 10 commands. Non-tech users don't know:
+
 - Where to start when they have an idea
 - Which workflow applies to their situation
 - Where they are in a multi-step process
@@ -20,14 +21,14 @@ A `guide` skill that acts as an interactive router/concierge. It speaks product 
 
 ## Routing Table
 
-| User intent (examples) | Detected as | Routes to | Confirmation |
-|---|---|---|---|
-| "Mình có ý tưởng mới", "thêm tính năng X" | New feature | brainstorming → writing-plans → executing-plans | Ask first |
-| "App bị lỗi", "không hoạt động", "trang trắng" | Bug/error | debug | Auto-run |
-| "Đưa lên mạng", "mọi người dùng được" | Deploy | release | Ask first |
-| "Cài đặt", "chạy app", "bắt đầu" | Setup | setup | Auto-run |
-| "Thay đổi giao diện", "đẹp hơn", "đổi màu" | Frontend change | frontend-design | Ask first |
-| "Tiếp tục đi", "hồi nãy làm dở" | Resume work | detect state → appropriate skill | Context-dependent |
+| User intent (examples)                         | Detected as     | Routes to                                       | Confirmation      |
+| ---------------------------------------------- | --------------- | ----------------------------------------------- | ----------------- |
+| "Mình có ý tưởng mới", "thêm tính năng X"      | New feature     | brainstorming → writing-plans → executing-plans | Ask first         |
+| "App bị lỗi", "không hoạt động", "trang trắng" | Bug/error       | debug                                           | Auto-run          |
+| "Đưa lên mạng", "mọi người dùng được"          | Deploy          | release                                         | Ask first         |
+| "Cài đặt", "chạy app", "bắt đầu"               | Setup           | setup                                           | Auto-run          |
+| "Thay đổi giao diện", "đẹp hơn", "đổi màu"     | Frontend change | frontend-design                                 | Ask first         |
+| "Tiếp tục đi", "hồi nãy làm dở"                | Resume work     | detect state → appropriate skill                | Context-dependent |
 
 ### Confirmation Rules
 
@@ -44,6 +45,7 @@ On session start, AI checks these signals in order:
 4. **Clean state** — nothing pending → greet and ask what they want to do
 
 Output example:
+
 - "Mình thấy bạn đang thiết kế tính năng tìm kiếm. Muốn tiếp tục không?"
 - "App đang có lỗi, để mình kiểm tra nhé."
 - "App đang chạy tốt. Bạn muốn làm gì tiếp?"
@@ -51,6 +53,7 @@ Output example:
 ## Voice & Tone
 
 Follows CLAUDE.md guidelines:
+
 - Friendly, concise, like texting a friend
 - Uses "mình" / "bạn"
 - NEVER exposes skill names, agent names, or technical terms
@@ -60,6 +63,7 @@ Follows CLAUDE.md guidelines:
 ## Cleanup: Remove speckit
 
 Speckit (9 skills + 9 commands + `.specify/` directory) is redundant with existing skills:
+
 - speckit-specify/clarify → brainstorming
 - speckit-plan → writing-plans
 - speckit-implement → executing-plans
@@ -68,6 +72,7 @@ Speckit (9 skills + 9 commands + `.specify/` directory) is redundant with existi
 ### Files to remove
 
 Skills (9):
+
 - `.claude/skills/speckit-analyze/`
 - `.claude/skills/speckit-checklist/`
 - `.claude/skills/speckit-clarify/`
@@ -79,6 +84,7 @@ Skills (9):
 - `.claude/skills/speckit-taskstoissues/`
 
 Commands (9):
+
 - `.claude/commands/speckit.analyze.md`
 - `.claude/commands/speckit.checklist.md`
 - `.claude/commands/speckit.clarify.md`
@@ -90,9 +96,11 @@ Commands (9):
 - `.claude/commands/speckit.taskstoissues.md`
 
 Directory:
+
 - `.specify/` (templates, memory, scripts)
 
 CLAUDE.md references:
+
 - Remove speckit entries from "Installed Skills & Commands" section
 
 ## Implementation Scope

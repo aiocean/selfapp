@@ -56,7 +56,7 @@ app.put('/:id', async (c) => {
   const db = c.env.DB
 
   const sets: string[] = []
-  const params: any[] = []
+  const params: (string | number)[] = []
   if (title !== undefined) {
     sets.push('title = ?')
     params.push(title)

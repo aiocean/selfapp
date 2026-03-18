@@ -27,6 +27,7 @@ mkdir -p .claude/skills/guide
 - [ ] **Step 2: Write SKILL.md**
 
 Create `.claude/skills/guide/SKILL.md` with:
+
 - Skill frontmatter: name `guide`, description targeting non-tech trigger phrases ("mình muốn", "bắt đầu", "tiếp tục", "app bị lỗi", "đưa lên mạng", "thay đổi giao diện")
 - Session start behavior: state detection from files (specs, git status, build errors)
 - Routing table: 6 intents mapped to skills (brainstorming, debug, release, setup, frontend-design, resume)
@@ -139,6 +140,7 @@ git commit -m "chore: remove .specify directory — speckit fully removed"
 - [ ] **Step 1: Update Installed Skills & Commands section**
 
 In CLAUDE.md, update the skills list:
+
 - Remove all speckit entries from the skills list
 - Remove `/speckit.*` from the commands list
 - Add `guide/` skill entry: "guide/ — Concierge giúp bạn tìm đúng bước tiếp theo, tự phát hiện trạng thái project"

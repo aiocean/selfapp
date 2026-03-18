@@ -6,7 +6,7 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options)
   if (!res.ok) {
     const body = await res.json().catch(() => ({}))
-    throw new Error((body as any).error || `HTTP ${res.status}`)
+    throw new Error(((body as Record<string, unknown>).error as string) || `HTTP ${res.status}`)
   }
   if (res.status === 204) return undefined as T
   return res.json()

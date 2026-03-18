@@ -164,6 +164,7 @@ Single `wrangler deploy` — Worker + static assets + D1 + cron, deployed global
 ### FE Tooling: vite-plus
 
 FE uses `vite-plus` (aliased as `vite` via package.json overrides), NOT standard Vite. CLI commands use `vp` instead of `vite`:
+
 - `vp dev`, `vp build`, `vp preview`, `vp check`, `vp test`, `vp fmt`
 - Path alias: `@shared/*` → `./shared/*` (configured in root `tsconfig.json`, used in FE imports like `import type { Note } from '@shared/types'`)
 
