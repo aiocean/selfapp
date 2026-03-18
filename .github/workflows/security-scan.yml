@@ -1,0 +1,132 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 1" # Weekly Monday 6am UTC
+
+permissions:
+  contents: read
+  security-events: write
+  issues: write
+
+jobs:
+  # ─── Secret Scanning ───────────────────────────────────────
+  gitleaks:
+    name: Gitleaks - Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trufflehog:
+    name: TruffleHog - Deep Secret Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: trufflesecurity/trufflehog@main
+        with:
+          extra_args: --only-verified
+
+  # ─── Auto-Privatize on Leak ────────────────────────────────
+  auto-privatize:
+    name: Auto-Privatize on Leak
+    runs-on: ubuntu-latest
+    needs: [gitleaks, trufflehog]
+    if: failure()
+    steps:
+      - name: Set repo to private
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.REPO_ADMIN_TOKEN }}
+          script: |
+            // Set repo to private immediately
+            await github.rest.repos.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              private: true,
+            });
+            console.log('Repo set to PRIVATE due to secret leak detection');
+
+      - name: Create critical issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.REPO_ADMIN_TOKEN }}
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 SECRET LEAK DETECTED - Repo set to PRIVATE',
+              body: [
+                '## Secret leak detected!',
+                '',
+                'This repo has been **automatically set to PRIVATE** to prevent further exposure.',
+                '',
+                '### What you need to do NOW:',
+                '',
+                '1. Check the failed scan run: ' + runUrl,
+                '2. Identify which secrets were leaked',
+                '3. **Rotate ALL leaked secrets immediately** (API keys, tokens, passwords)',
+                '4. Remove the secrets from git history (use `git filter-repo` or BFG)',
+                '5. Only set repo back to public after ALL secrets are rotated',
+                '',
+                '> ⚠️ Even though the repo is now private, the leaked secrets may already be compromised.',
+                '> **Rotating them is mandatory, not optional.**',
+              ].join('\n'),
+              labels: ['critical', 'security'],
+            });
+
+  # ─── SAST Code Scan ────────────────────────────────────────
+  semgrep:
+    name: Semgrep - Code Vulnerability Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    container:
+      image: semgrep/semgrep
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: semgrep scan --config auto --error --sarif --output semgrep.sarif .
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: semgrep.sarif
+        continue-on-error: true
+
+  # ─── Dependency Vulnerability Scan ─────────────────────────
+  trivy:
+    name: Trivy - Dependency Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          format: sarif
+          output: trivy.sarif
+
+      - name: Upload SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy.sarif
+        continue-on-error: true
