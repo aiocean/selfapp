@@ -23,9 +23,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_8.24.3_linux_x64.tar.gz | tar xz
+          sudo mv gitleaks /usr/local/bin/
+
+      - name: Run Gitleaks
+        id: gitleaks
+        run: gitleaks detect --source . --verbose --exit-code 1
+
+    outputs:
+      leak_found: ${{ steps.gitleaks.outcome == 'failure' }}
 
   trufflehog:
     name: TruffleHog - Deep Secret Scan
@@ -39,19 +47,21 @@ jobs:
         with:
           extra_args: --only-verified
 
+    outputs:
+      leak_found: ${{ job.status == 'failure' }}
+
   # ─── Auto-Privatize on Leak ────────────────────────────────
   auto-privatize:
     name: Auto-Privatize on Leak
     runs-on: ubuntu-latest
     needs: [gitleaks, trufflehog]
-    if: failure()
+    if: always() && (needs.gitleaks.outputs.leak_found == 'true' || needs.trufflehog.outputs.leak_found == 'true')
     steps:
       - name: Set repo to private
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.REPO_ADMIN_TOKEN }}
           script: |
-            // Set repo to private immediately
             await github.rest.repos.update({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -82,7 +92,7 @@ jobs:
                 '4. Remove the secrets from git history (use `git filter-repo` or BFG)',
                 '5. Only set repo back to public after ALL secrets are rotated',
                 '',
-                '> ⚠️ Even though the repo is now private, the leaked secrets may already be compromised.',
+                '> Even though the repo is now private, the leaked secrets may already be compromised.',
                 '> **Rotating them is mandatory, not optional.**',
               ].join('\n'),
               labels: ['critical', 'security'],
