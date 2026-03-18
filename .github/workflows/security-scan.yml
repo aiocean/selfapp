@@ -23,14 +23,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Gitleaks
-        run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks_8.24.3_linux_x64.tar.gz | tar xz
-          sudo mv gitleaks /usr/local/bin/
-
-      - name: Run Gitleaks
+      - name: Install and Run Gitleaks
         id: gitleaks
-        run: gitleaks detect --source . --verbose --exit-code 1
+        run: |
+          LATEST=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep -oP '"tag_name":\s*"v\K[^"]+')
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${LATEST}/gitleaks_${LATEST}_linux_amd64.tar.gz" | tar xz
+          sudo mv gitleaks /usr/local/bin/
+          gitleaks detect --source . --verbose --exit-code 1
 
     outputs:
       leak_found: ${{ steps.gitleaks.outcome == 'failure' }}
