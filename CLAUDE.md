@@ -86,6 +86,7 @@ User mô tả ý tưởng
 
 ## Tech Stack
 
+- **Monorepo**: Bun workspaces (`be/`, `fe/` — single `bun install` at root)
 - **Runtime**: Cloudflare Workers (V8 isolates, edge-distributed)
 - **Frontend**: Vue 3 (Composition API) + Vite + Tailwind CSS + Shadcn-vue
 - **Backend**: Hono framework on Cloudflare Workers
@@ -99,28 +100,40 @@ User mô tả ý tưởng
 ## Project Structure
 
 ```
-template/
-├── wrangler.jsonc              # Cloudflare Workers config (D1, assets, cron)
-├── worker-configuration.d.ts   # Auto-generated types (run: wrangler types)
-├── package.json
-├── tsconfig.json
+template/                          # Bun workspaces monorepo
+├── package.json                   # Root: workspaces ["be", "fe"], shared devDeps
+├── bun.lock                       # Single lockfile for all workspaces
+├── wrangler.jsonc                 # Cloudflare Workers config (D1, assets, cron)
+├── worker-configuration.d.ts      # Auto-generated types (run: wrangler types)
+├── tsconfig.json                  # Root tsconfig (includes shared, be, db)
 ├── shared/
-│   └── types.ts                # Data models (Note, CreateNote, UpdateNote)
-├── be/
-│   ├── worker.ts               # Entry point: Hono app + scheduled() handler
+│   └── types.ts                   # Data models (Note, CreateNote, UpdateNote)
+├── be/                            # Workspace: backend
+│   ├── package.json               # BE deps (hono)
+│   ├── worker.ts                  # Entry point: Hono app + scheduled() handler
 │   └── routes/
-│       └── notes.ts            # REST route handlers (D1 queries)
+│       └── notes.ts               # REST route handlers (D1 queries)
 ├── db/
-│   └── migrations/             # SQL migration files (applied via wrangler d1)
+│   └── migrations/                # SQL migration files (applied via wrangler d1)
 │       └── 001_create_notes.sql
-└── fe/                         # Vue 3 SPA (served via Workers Static Assets)
-    ├── src/
-    │   ├── composables/useApi.ts   # Frontend REST API client
-    │   ├── composables/useNotes.ts # State management
-    │   └── components/             # Vue components
+└── fe/                            # Workspace: frontend (Vue 3 SPA)
+    ├── package.json               # FE deps (vue, tailwind, shadcn-vue, vite-plus)
     ├── vite.config.ts
-    └── package.json
+    └── src/
+        ├── composables/useApi.ts  # Frontend REST API client
+        ├── composables/useNotes.ts # State management
+        └── components/            # Vue components
 ```
+
+### Monorepo (Bun Workspaces)
+
+Root `package.json` declares `"workspaces": ["be", "fe"]`. Single `bun install` at root installs all dependencies for both workspaces. Each workspace has its own `package.json`:
+
+- **Root**: shared devDeps (wrangler, oxlint, oxfmt, typescript) + workspace scripts
+- **`be/`**: runtime deps (hono)
+- **`fe/`**: runtime deps (vue, tailwind, shadcn-vue) + devDeps (vite-plus, tailwindcss)
+
+Run commands from root using `bun run <script>`. FE-specific scripts are proxied: `bun run dev:fe` → `bun run --cwd fe dev`.
 
 ## Architecture
 
@@ -308,6 +321,7 @@ return new Response(object.body, { headers })
 
 Skills tại `.claude/skills/` (project-specific):
 
+- `guide/` — Concierge giúp bạn tìm đúng bước tiếp theo, tự phát hiện trạng thái project
 - `setup/` — Cài đặt mọi thứ để chạy app trên máy (bun, packages, database)
 - `release/` — Quy trình deploy selfapp lên Cloudflare (8 bước)
 - `debug/` — Debug theo từng layer: FE, REST API, BE, D1, AI SDK, Deploy
@@ -322,7 +336,6 @@ Slash commands tại `.claude/commands/` (project-specific):
 - `/setup` — Cài đặt công cụ và chuẩn bị chạy app
 - `/release` — Triển khai app lên Cloudflare
 - `/debug` — Debug lỗi trong app
-- `/speckit.*` — Feature planning workflow (analyze, clarify, plan, implement, v.v.)
 
 ### Tự cải thiện skill trong quá trình làm việc
 

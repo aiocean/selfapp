@@ -30,7 +30,7 @@ cd fe && bunx tsc --noEmit 2>&1
 ### Build check
 
 ```bash
-cd fe && bun run build 2>&1
+bun run build 2>&1
 ```
 
 ### Wrangler config
@@ -92,11 +92,8 @@ ls fe/dist/assets/ 2>&1 | head -10
 ### Dependencies
 
 ```bash
-# Root deps
+# All deps (bun workspaces — single install at root covers be/ + fe/)
 bun install --dry-run 2>&1 | head -5
-
-# FE deps
-cd fe && bun install --dry-run 2>&1 | head -5
 ```
 
 ### Source code scan
@@ -168,7 +165,7 @@ bunx tsc --noEmit 2>&1
 cd fe && bunx tsc --noEmit 2>&1
 
 # 2. FE build OK
-cd fe && bun run build 2>&1
+bun run build 2>&1
 
 # 3. Test endpoint bị lỗi
 curl -s http://localhost:8787/api/notes

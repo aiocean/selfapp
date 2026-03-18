@@ -151,7 +151,7 @@ Secret chưa được set. Chạy lại Bước 4.
 ### Build lỗi
 
 ```bash
-cd fe && bun install && bun run build
+bun install && bun run build
 ```
 
 ### "Worker size limit exceeded"
