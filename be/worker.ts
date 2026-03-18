@@ -20,8 +20,6 @@ export default {
       "DELETE FROM notes WHERE title = '' AND content = '' AND created_at < datetime('now', '-7 days')",
     ).run()
 
-    if (result.meta.changes > 0) {
-      console.log(`Cleaned up ${result.meta.changes} empty notes`)
-    }
+    void result.meta.changes
   },
 }

@@ -76,6 +76,7 @@ These commands map to their corresponding tools. For example, `vp dev --port 300
 <!--VITE PLUS END-->
 
 <!-- ai-annotator:start -->
+
 AI Annotator provides access to the user's live browser session. Users select UI elements and add feedback comments. Use the REST API to read feedback, capture screenshots, inject CSS/JS, and read console logs.
 
 Server: `http://127.0.0.1:7318`
@@ -84,17 +85,17 @@ Server: `http://127.0.0.1:7318`
 
 All endpoints return JSON. Obtain session ID from `GET /api/sessions` first.
 
-| Method | Endpoint | Body/Query | Description |
-|--------|----------|------------|-------------|
-| `GET` | `http://127.0.0.1:7318/api/sessions` | — | List connected browser sessions |
-| `GET` | `http://127.0.0.1:7318/api/sessions/:id/page-context` | — | Page URL, title, selection count |
-| `POST` | `http://127.0.0.1:7318/api/sessions/:id/select` | `{mode?, selector?, selectorType?}` | Trigger feedback selection |
-| `GET` | `http://127.0.0.1:7318/api/sessions/:id/feedback` | `?fields=xpath,attributes,styles,children` | Get selected feedback items |
-| `DELETE` | `http://127.0.0.1:7318/api/sessions/:id/feedback` | — | Clear all selections |
-| `POST` | `http://127.0.0.1:7318/api/sessions/:id/screenshot` | `{type?, selector?, quality?}` | Capture screenshot |
-| `POST` | `http://127.0.0.1:7318/api/sessions/:id/inject-css` | `{css}` | Inject CSS into page |
-| `POST` | `http://127.0.0.1:7318/api/sessions/:id/inject-js` | `{code}` | Execute JS in page context |
-| `GET` | `http://127.0.0.1:7318/api/sessions/:id/console` | `?clear=true` | Get captured console logs |
+| Method   | Endpoint                                              | Body/Query                                 | Description                      |
+| -------- | ----------------------------------------------------- | ------------------------------------------ | -------------------------------- |
+| `GET`    | `http://127.0.0.1:7318/api/sessions`                  | —                                          | List connected browser sessions  |
+| `GET`    | `http://127.0.0.1:7318/api/sessions/:id/page-context` | —                                          | Page URL, title, selection count |
+| `POST`   | `http://127.0.0.1:7318/api/sessions/:id/select`       | `{mode?, selector?, selectorType?}`        | Trigger feedback selection       |
+| `GET`    | `http://127.0.0.1:7318/api/sessions/:id/feedback`     | `?fields=xpath,attributes,styles,children` | Get selected feedback items      |
+| `DELETE` | `http://127.0.0.1:7318/api/sessions/:id/feedback`     | —                                          | Clear all selections             |
+| `POST`   | `http://127.0.0.1:7318/api/sessions/:id/screenshot`   | `{type?, selector?, quality?}`             | Capture screenshot               |
+| `POST`   | `http://127.0.0.1:7318/api/sessions/:id/inject-css`   | `{css}`                                    | Inject CSS into page             |
+| `POST`   | `http://127.0.0.1:7318/api/sessions/:id/inject-js`    | `{code}`                                   | Execute JS in page context       |
+| `GET`    | `http://127.0.0.1:7318/api/sessions/:id/console`      | `?clear=true`                              | Get captured console logs        |
 
 ## Workflow
 

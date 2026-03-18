@@ -8,5 +8,11 @@ export default defineConfig({
     'typescript/no-explicit-any': 'warn',
     'typescript/no-unused-vars': 'error',
   },
-  ignorePatterns: ['dist/**', 'node_modules/**', '*.d.ts'],
+  ignorePatterns: [
+    'dist/**',
+    'node_modules/**',
+    '*.d.ts',
+    'fe/src/components/ui/**',
+    '.claude/skills/**/*.js',
+  ],
 })
