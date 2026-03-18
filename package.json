@@ -2,7 +2,7 @@
   "name": "selfapp",
   "private": true,
   "type": "module",
-  "workspaces": ["fe"],
+  "workspaces": ["be", "fe"],
   "scripts": {
     "dev": "bun run dev:be & bun run dev:fe && wait",
     "dev:be": "wrangler dev",
@@ -18,9 +18,7 @@
     "fmt:check": "oxfmt --check .",
     "check": "oxlint && oxfmt --check ."
   },
-  "dependencies": {
-    "hono": "^4.12.8"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/node": "^25.5.0",
     "oxfmt": "^0.41.0",

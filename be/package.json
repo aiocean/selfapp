@@ -1,0 +1,8 @@
+{
+  "name": "selfapp-be",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "hono": "^4.12.8"
+  }
+}
