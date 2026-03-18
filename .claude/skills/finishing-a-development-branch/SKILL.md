@@ -15,14 +15,23 @@ Guide completion of development work by presenting clear options and handling ch
 
 ## The Process
 
-### Step 1: Verify Tests
+### Step 1: Verify Tests & Change Scope
 
-**Before presenting options, verify tests pass:**
+**Before presenting options, verify tests pass and changes are scoped correctly:**
 
 ```bash
 # Run project's test suite
 npm test / cargo test / pytest / go test ./...
 ```
+
+**Verify change scope with GitNexus:**
+
+```bash
+# Check what symbols and flows changed on this branch
+gitnexus_detect_changes({scope: "compare", base_ref: "<base-branch>"})
+```
+
+Review the change report — if unexpected symbols or files appear, investigate before proceeding.
 
 **If tests fail:**
 
@@ -211,3 +220,4 @@ git worktree remove <worktree-path>
 **Pairs with:**
 
 - **using-git-worktrees** - Cleans up worktree created by that skill
+- **gitnexus-impact-analysis** - Verify change scope before merge/PR

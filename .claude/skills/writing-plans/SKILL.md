@@ -27,6 +27,21 @@ If the spec covers multiple independent subsystems, it should have been broken i
 
 Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
 
+**Use GitNexus to understand impact before planning changes:**
+
+```
+# Understand what depends on files you plan to modify
+gitnexus_impact({target: "<symbol>", direction: "upstream"})
+
+# Explore how a feature area works before planning changes
+gitnexus_query({query: "<feature area>"})
+
+# Get full context on a specific symbol
+gitnexus_context({name: "<function or class>"})
+```
+
+This ensures the plan accounts for all affected files and doesn't miss hidden dependencies.
+
 - Design units with clear boundaries and well-defined interfaces. Each file should have one clear responsibility.
 - You reason best about code you can hold in context at once, and your edits are more reliable when files are focused. Prefer smaller, focused files over large ones that do too much.
 - Files that change together should live together. Split by responsibility, not by technical layer.

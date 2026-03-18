@@ -68,6 +68,17 @@ After all tasks complete and verified:
 - Stop when blocked, don't guess
 - Never start implementation on main/master branch without explicit user consent
 
+## Pre-Commit Verification with GitNexus
+
+Before committing after each task, run `gitnexus_detect_changes()` to verify only expected files and symbols changed. This catches accidental side effects early.
+
+```
+# After implementing a task, before committing:
+gitnexus_detect_changes({scope: "staged"})
+```
+
+If unexpected symbols appear in the change report, investigate before committing.
+
 ## Integration
 
 **Required workflow skills:**
@@ -75,3 +86,4 @@ After all tasks complete and verified:
 - **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
+- **gitnexus-impact-analysis** - Check blast radius before modifying symbols during execution

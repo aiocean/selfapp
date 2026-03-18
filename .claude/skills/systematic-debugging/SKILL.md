@@ -118,7 +118,14 @@ You MUST complete each phase before proceeding to the next.
 
    See `root-cause-tracing.md` in this directory for the complete backward tracing technique.
 
-   **Quick version:**
+   **Use GitNexus for faster tracing (if indexed):**
+   - `gitnexus_query({query: "<error or symptom>"})` — find execution flows related to the issue
+   - `gitnexus_context({name: "<suspect function>"})` — see all callers, callees, and process participation
+   - `gitnexus_impact({target: "<symbol>", direction: "upstream"})` — trace all upstream callers
+
+   GitNexus understands the call graph and can pinpoint the exact chain of calls faster than manual grep.
+
+   **Quick version (without GitNexus):**
    - Where does bad value originate?
    - What called this with bad value?
    - Keep tracing up until you find the source
@@ -294,6 +301,7 @@ These techniques are part of systematic debugging and available in this director
 
 - **superpowers:test-driven-development** - For creating failing test case (Phase 4, Step 1)
 - **superpowers:verification-before-completion** - Verify fix worked before claiming success
+- **gitnexus-debugging** - GitNexus-powered debugging: trace errors through call graph, find execution flows
 
 ## Real-World Impact
 

@@ -110,6 +110,15 @@ Skip any step = lying, not verifying
 ❌ Trust agent report
 ```
 
+**Change scope verification (GitNexus):**
+
+```
+✅ gitnexus_detect_changes({scope: "staged"}) → Only expected symbols changed → Commit
+❌ Commit without checking blast radius
+```
+
+Use `gitnexus_detect_changes()` before committing to verify changes only affect expected symbols and execution flows. This catches accidental side effects that tests might miss.
+
 ## Why This Matters
 
 From 24 failure memories:

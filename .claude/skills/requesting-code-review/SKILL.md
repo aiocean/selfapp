@@ -23,6 +23,20 @@ Dispatch superpowers:code-reviewer subagent to catch issues before they cascade.
 - Before refactoring (baseline check)
 - After fixing complex bug
 
+## Pre-Review: Check Impact with GitNexus
+
+Before requesting review, run impact analysis to understand the blast radius of your changes:
+
+```
+# See what symbols changed and their dependents
+gitnexus_detect_changes({scope: "staged"})
+
+# For each modified symbol, check upstream impact
+gitnexus_impact({target: "<modified symbol>", direction: "upstream"})
+```
+
+Include the impact summary in your review request — helps the reviewer focus on high-risk areas.
+
 ## How to Request
 
 **1. Get git SHAs:**

@@ -78,7 +78,22 @@ Lệnh này tạo cơ sở dữ liệu local để app lưu trữ dữ liệu kh
 
 Nói với user: "Mình đang chuẩn bị chỗ lưu dữ liệu cho app..."
 
-## Bước 4 — Kiểm tra tổng
+## Bước 4 — Cập nhật bản đồ code (GitNexus)
+
+Project dùng GitNexus để AI hiểu được cấu trúc code và mối quan hệ giữa các file. Sau khi cài packages xong, chạy:
+
+```bash
+cd <project-root>
+npx gitnexus analyze
+```
+
+Lệnh này tạo "bản đồ" cho toàn bộ code — giúp AI biết chỗ nào liên quan đến chỗ nào khi cần sửa lỗi hay thêm tính năng.
+
+Nếu đây là lần đầu setup, có thể mất vài giây. Lần sau chạy lại sẽ nhanh hơn.
+
+Nói với user: "Mình đang tạo bản đồ cho code để hiểu app tốt hơn..."
+
+## Bước 5 — Kiểm tra tổng
 
 Chạy kiểm tra nhanh để đảm bảo mọi thứ hoạt động:
 
@@ -89,6 +104,9 @@ cd <project-root>
 bun --version && echo "✓ bun"
 bunx wrangler --version && echo "✓ wrangler"
 bunx --cwd fe vp --version 2>/dev/null && echo "✓ vite-plus" || (cd fe && npx vp --version 2>/dev/null && echo "✓ vite-plus" || echo "⚠ vite-plus chưa xác nhận được (có thể vẫn hoạt động)")
+
+# Kiểm tra GitNexus index
+test -d .gitnexus && echo "✓ gitnexus" || echo "⚠ gitnexus chưa index (chạy: npx gitnexus analyze)"
 ```
 
 Nếu tất cả đều có ✓ → báo user thành công.

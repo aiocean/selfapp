@@ -79,15 +79,26 @@ curl -s -X POST http://localhost:8787/api/chat \
   -d '{"messages":[{"role":"user","content":"test"}]}' 2>&1 | head -20
 ```
 
-### Frontend runtime
+### Frontend runtime (browser logs)
+
+Vite+ có `forwardConsole: true` trong `fe/vite.config.ts` — log từ trình duyệt tự động hiện trong terminal. Khai thác cái này:
 
 ```bash
-# Kiểm tra dist tồn tại
+# 1. Chạy FE dev server (nếu chưa chạy)
+bun run dev:fe &
+
+# 2. Đợi vài giây rồi đọc output — log/error từ trình duyệt sẽ hiện dạng:
+#    [vite+] (client) [console.warn] ...
+#    [vite+] (client) [console.error] ...
+
+# 3. Kiểm tra dist tồn tại
 ls -la fe/dist/index.html 2>&1
 
 # Kiểm tra assets
 ls fe/dist/assets/ 2>&1 | head -10
 ```
+
+**Lưu ý:** Khi dev server đang chạy, mọi `console.log`, `console.warn`, `console.error` từ trình duyệt đều forward về terminal. AI đọc được trực tiếp mà không cần user copy paste từ DevTools.
 
 ### Dependencies
 
@@ -116,9 +127,26 @@ grep -rn "\.prepare(.*\.all\b\|\.prepare(.*\.first\b\|\.prepare(.*\.run\b" be/ 2
 grep -rn '`.*\$.*`' be/routes/ 2>/dev/null
 ```
 
-## Bước 3: Đọc code liên quan
+## Bước 3: Dùng GitNexus để hiểu mối quan hệ code
 
-Dựa trên triệu chứng + kết quả quét, đọc các file liên quan:
+Trước khi đọc code thủ công, dùng GitNexus để nhanh chóng tìm đúng chỗ liên quan:
+
+```
+# Tìm execution flow liên quan đến triệu chứng
+gitnexus_query({query: "<mô tả triệu chứng>"})
+
+# Xem toàn bộ callers/callees của function nghi ngờ
+gitnexus_context({name: "<tên function>"})
+
+# Đánh giá blast radius trước khi sửa
+gitnexus_impact({target: "<symbol cần sửa>", direction: "upstream"})
+```
+
+GitNexus giúp AI tìm đúng file/function liên quan nhanh hơn nhiều so với tìm thủ công — đặc biệt khi lỗi nằm sâu trong chuỗi gọi hàm.
+
+## Bước 4: Đọc code liên quan
+
+Dựa trên triệu chứng + kết quả quét + kết quả GitNexus, đọc các file liên quan:
 
 | Triệu chứng     | Đọc file                                                                                      |
 | --------------- | --------------------------------------------------------------------------------------------- |
@@ -130,7 +158,7 @@ Dựa trên triệu chứng + kết quả quét, đọc các file liên quan:
 
 **Đọc cả `shared/types.ts`** để hiểu toàn bộ data model — lỗi API thường do mismatch giữa FE gọi và BE xử lý.
 
-## Bước 4: Chẩn đoán
+## Bước 5: Chẩn đoán
 
 Từ tất cả data thu thập, xác định:
 
@@ -153,7 +181,7 @@ Từ tất cả data thu thập, xác định:
 | CORS error                                  | Endpoint thiếu headers              | Thêm CORS headers trong worker.ts                         |
 | `process is not defined`                    | Dùng process.env trong Workers      | Đổi sang `env.` từ handler param                          |
 
-## Bước 5: Sửa lỗi
+## Bước 6: Sửa lỗi
 
 **Tự sửa luôn.** Không hỏi user "mình sửa nhé?". Cứ sửa.
 
@@ -176,7 +204,7 @@ bunx wrangler d1 migrations apply <db-name> --local
 
 Nếu sửa xong mà vẫn lỗi → lặp lại từ Bước 2 với thông tin mới.
 
-## Bước 6: Báo kết quả cho user
+## Bước 7: Báo kết quả cho user
 
 > "Mình đã tìm ra và sửa xong vấn đề rồi. [Giải thích 1 câu đơn giản]. Bạn thử lại xem nhé!"
 
