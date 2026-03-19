@@ -64,17 +64,13 @@ if ! command -v gitnexus &>/dev/null; then
   bun add -g gitnexus 2>/dev/null || npm install -g gitnexus 2>/dev/null || warn "Khong cai duoc gitnexus. Chay: npm install -g gitnexus"
 fi
 
-# --- 7. Setup local database ---
-info "Tao database cuc bo..."
-bun run db:migrate 2>/dev/null || warn "Chua tao duoc database. Chay 'bun run db:migrate' sau."
-
-# --- 8. Index codebase ---
+# --- 7. Index codebase ---
 if command -v gitnexus &>/dev/null; then
   info "Index codebase..."
   npx gitnexus analyze 2>/dev/null || true
 fi
 
-# --- 9. Done ---
+# --- 8. Done ---
 echo ""
 echo -e "${GREEN}========================================${NC}"
 echo -e "${GREEN}  Setup xong!${NC}"
