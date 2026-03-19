@@ -8,8 +8,8 @@
   "type": "module",
   "scripts": {
     "dev": "bun run dev:be & bun run dev:fe && wait",
-    "dev:be": "wrangler dev",
-    "dev:fe": "bun run --cwd fe dev",
+    "dev:be": "lsof -ti:8787 | xargs kill -9 2>/dev/null; wrangler dev",
+    "dev:fe": "lsof -ti:5173 | xargs kill -9 2>/dev/null; bun run --cwd fe dev",
     "build": "bun run --cwd fe build",
     "deploy": "bun run build && wrangler deploy",
     "db:create": "wrangler d1 create selfapp-db",

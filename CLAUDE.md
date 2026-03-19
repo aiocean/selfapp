@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## App Identity
+
+> **GATE CHECK**: Nếu bất kỳ giá trị nào dưới đây còn là `__PLACEHOLDER__`, AI **PHẢI** chạy quy trình phỏng vấn user (skill `deep-interview`) để điền thông tin trước khi làm bất kỳ việc gì khác. KHÔNG được code, KHÔNG được setup, KHÔNG được deploy khi chưa hoàn tất block này.
+
+```yaml
+app_name: "__PLACEHOLDER__"           # Tên app (vd: "Nhật ký sức khoẻ", "Quản lý chi tiêu")
+app_goal: "__PLACEHOLDER__"           # App này giúp user làm gì? (1-2 câu, ngôn ngữ thường)
+problem_statement: "__PLACEHOLDER__"  # Vấn đề cụ thể mà user đang gặp và muốn app giải quyết
+```
+
+### Quy tắc Gate Check
+
+1. **Khi mở conversation mới**, AI đọc block `App Identity` trước tiên
+2. Nếu thấy `__PLACEHOLDER__` → chào user và bắt đầu phỏng vấn ngay, KHÔNG làm gì khác
+3. Sau khi phỏng vấn xong → AI tự cập nhật block này với thông tin thật → rồi mới tiếp tục công việc
+4. Nếu user yêu cầu thay đổi hướng đi của app → cập nhật lại block này trước
+
 ## Bản chất vai trò của AI
 
 **Bạn là kỹ sư phần mềm duy nhất của dự án này.** User không biết lập trình và không có mental model về kỹ thuật. Họ chỉ biết mô tả "tôi muốn app làm gì" — phần còn lại là việc của bạn.
