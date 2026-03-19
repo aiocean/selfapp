@@ -29,6 +29,8 @@ bunx wrangler login
 
 Thông báo user: "Mình cần bạn đăng nhập Cloudflare trong trình duyệt vừa mở. Đăng nhập xong quay lại đây nhé."
 
+Nếu user chưa có tài khoản Cloudflare (login thất bại, user nói chưa đăng ký) → invoke skill `cloudflare-account` để hướng dẫn tạo tài khoản trước, rồi quay lại đây.
+
 ### Bước 2: Tạo database (lần đầu)
 
 Kiểm tra `wrangler.jsonc` — nếu `database_id` đang rỗng (`""`), cần tạo mới:
