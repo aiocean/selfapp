@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { useAuth } from './composables/useAuth'
 import { useNotes } from './composables/useNotes'
+import AuthPage from './components/AuthPage.vue'
 import NoteList from './components/NoteList.vue'
 import NoteEditor from './components/NoteEditor.vue'
 import {
@@ -14,18 +16,48 @@ import {
   AlertDialogTitle,
 } from './components/ui/alert-dialog'
 import { Checkbox } from './components/ui/checkbox'
-import type { Note } from '@shared/types'
+import type { NoteWithCategory } from '@shared/types'
 
 const SKIP_DELETE_CONFIRM_KEY = 'selfapp-skip-delete-confirm'
 
+const { user, needsSetup, loading: authLoading, error: authError, isAuthenticated, checkAuth, setup, login, logout } = useAuth()
 const { notes, loading, fetchNotes, createNote, updateNote, deleteNote } = useNotes()
-const selectedNote = ref<Note | null>(null)
+const selectedNote = ref<NoteWithCategory | null>(null)
 const searchQuery = ref('')
 const deleteDialogOpen = ref(false)
 const pendingDeleteId = ref<string | null>(null)
 const rememberChoice = ref(false)
 
-onMounted(() => fetchNotes())
+onMounted(async () => {
+  await checkAuth()
+  if (isAuthenticated.value) {
+    fetchNotes()
+  }
+})
+
+async function onSetup(username: string, password: string) {
+  try {
+    await setup(username, password)
+    fetchNotes()
+  } catch {
+    // error is set in useAuth
+  }
+}
+
+async function onLogin(username: string, password: string) {
+  try {
+    await login(username, password)
+    fetchNotes()
+  } catch {
+    // error is set in useAuth
+  }
+}
+
+async function onLogout() {
+  await logout()
+  selectedNote.value = null
+  searchQuery.value = ''
+}
 
 async function onNew() {
   const note = await createNote({ title: '', content: '' })
@@ -67,27 +99,53 @@ async function onSearch() {
 </script>
 
 <template>
-  <div class="flex h-screen overflow-hidden">
+  <!-- Loading state -->
+  <div v-if="authLoading" class="flex items-center justify-center h-screen paper-texture">
+    <div class="animate-pulse text-muted-foreground/40 font-serif italic text-lg">Loading...</div>
+  </div>
+
+  <!-- Auth page -->
+  <AuthPage
+    v-else-if="!isAuthenticated"
+    :needs-setup="needsSetup"
+    :error="authError"
+    @setup="onSetup"
+    @login="onLogin"
+  />
+
+  <!-- Main app -->
+  <div v-else class="flex h-screen overflow-hidden">
     <!-- Sidebar -->
     <div class="relative w-80 border-r border-border/60 flex flex-col bg-sidebar paper-texture">
       <!-- Header -->
       <div class="px-5 pt-6 pb-4 flex items-center justify-between">
         <h1 class="font-serif text-2xl italic tracking-tight text-foreground/90">Notes</h1>
-        <button
-          @click="onNew"
-          class="p-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-all duration-200 hover:shadow-md active:scale-95 font-medium"
-          title="New note"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2.5"
+        <div class="flex items-center gap-2">
+          <button
+            @click="onLogout"
+            class="p-2 text-sm text-muted-foreground/60 hover:text-foreground rounded-lg hover:bg-accent/10 transition-all duration-200"
+            title="Sign out"
           >
-            <path d="M12 5v14m-7-7h14" />
-          </svg>
-        </button>
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+          </button>
+          <button
+            @click="onNew"
+            class="p-2 text-sm bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-all duration-200 hover:shadow-md active:scale-95 font-medium"
+            title="New note"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2.5"
+            >
+              <path d="M12 5v14m-7-7h14" />
+            </svg>
+          </button>
+        </div>
       </div>
 
       <!-- Search -->
@@ -207,22 +265,22 @@ async function onSearch() {
     <AlertDialog v-model:open="deleteDialogOpen">
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Xóa ghi chú này?</AlertDialogTitle>
+          <AlertDialogTitle>Delete this note?</AlertDialogTitle>
           <AlertDialogDescription>
-            Ghi chú sẽ bị xóa vĩnh viễn và không thể khôi phục.
+            This note will be permanently deleted and cannot be recovered.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <label class="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
           <Checkbox v-model:checked="rememberChoice" />
-          Không hỏi lại
+          Don't ask again
         </label>
         <AlertDialogFooter>
-          <AlertDialogCancel>Huỷ</AlertDialogCancel>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             class="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             @click="confirmDelete()"
           >
-            Xóa
+            Delete
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

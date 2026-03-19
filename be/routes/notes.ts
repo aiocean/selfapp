@@ -1,33 +1,61 @@
 import { Hono } from 'hono'
-import type { Note } from '../../shared/types'
+import type { NoteWithCategory } from '../../shared/types'
 
 type Bindings = Env
 
 const app = new Hono<{ Bindings: Bindings }>()
 
-// GET /api/notes — list all notes, optional ?q= search
+// Base SELECT with category join — used by list and get
+const NOTE_SELECT = `
+  SELECT n.*, c.name as category_name, c.color as category_color
+  FROM notes n
+  LEFT JOIN categories c ON c.id = n.category_id`
+
+// GET /api/notes — list all notes, optional ?q= search, optional ?category= filter
 app.get('/', async (c) => {
   const query = c.req.query('q')
+  const categoryId = c.req.query('category')
   const db = c.env.DB
+
+  if (query && categoryId) {
+    const { results } = await db
+      .prepare(
+        `${NOTE_SELECT} WHERE (n.title LIKE ?1 OR n.content LIKE ?1) AND n.category_id = ?2 ORDER BY n.updated_at DESC`,
+      )
+      .bind(`%${query}%`, categoryId)
+      .all<NoteWithCategory>()
+    return c.json(results)
+  }
 
   if (query) {
     const { results } = await db
       .prepare(
-        'SELECT * FROM notes WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY updated_at DESC',
+        `${NOTE_SELECT} WHERE n.title LIKE ?1 OR n.content LIKE ?1 ORDER BY n.updated_at DESC`,
       )
       .bind(`%${query}%`)
-      .all<Note>()
+      .all<NoteWithCategory>()
     return c.json(results)
   }
 
-  const { results } = await db.prepare('SELECT * FROM notes ORDER BY updated_at DESC').all<Note>()
+  if (categoryId) {
+    const { results } = await db
+      .prepare(`${NOTE_SELECT} WHERE n.category_id = ? ORDER BY n.updated_at DESC`)
+      .bind(categoryId)
+      .all<NoteWithCategory>()
+    return c.json(results)
+  }
+
+  const { results } = await db.prepare(`${NOTE_SELECT} ORDER BY n.updated_at DESC`).all<NoteWithCategory>()
   return c.json(results)
 })
 
-// GET /api/notes/:id — get single note
+// GET /api/notes/:id — get single note with category
 app.get('/:id', async (c) => {
   const id = c.req.param('id')
-  const note = await c.env.DB.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
+  const note = await c.env.DB
+    .prepare(`${NOTE_SELECT} WHERE n.id = ?`)
+    .bind(id)
+    .first<NoteWithCategory>()
 
   if (!note) return c.json({ error: 'Note not found' }, 404)
   return c.json(note)
@@ -35,16 +63,23 @@ app.get('/:id', async (c) => {
 
 // POST /api/notes — create note
 app.post('/', async (c) => {
-  const { title, content } = await c.req.json<{ title: string; content: string }>()
+  const { title, content, category_id } = await c.req.json<{
+    title: string
+    content: string
+    category_id?: string | null
+  }>()
   const id = crypto.randomUUID()
   const db = c.env.DB
 
   await db
-    .prepare('INSERT INTO notes (id, title, content) VALUES (?, ?, ?)')
-    .bind(id, title, content)
+    .prepare('INSERT INTO notes (id, title, content, category_id) VALUES (?, ?, ?, ?)')
+    .bind(id, title, content, category_id ?? null)
     .run()
 
-  const note = await db.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
+  const note = await db
+    .prepare(`${NOTE_SELECT} WHERE n.id = ?`)
+    .bind(id)
+    .first<NoteWithCategory>()
 
   return c.json(note!, 201)
 })
@@ -52,11 +87,15 @@ app.post('/', async (c) => {
 // PUT /api/notes/:id — update note
 app.put('/:id', async (c) => {
   const id = c.req.param('id')
-  const { title, content } = await c.req.json<{ title?: string; content?: string }>()
+  const { title, content, category_id } = await c.req.json<{
+    title?: string
+    content?: string
+    category_id?: string | null
+  }>()
   const db = c.env.DB
 
   const sets: string[] = []
-  const params: (string | number)[] = []
+  const params: (string | number | null)[] = []
   if (title !== undefined) {
     sets.push('title = ?')
     params.push(title)
@@ -64,6 +103,10 @@ app.put('/:id', async (c) => {
   if (content !== undefined) {
     sets.push('content = ?')
     params.push(content)
+  }
+  if (category_id !== undefined) {
+    sets.push('category_id = ?')
+    params.push(category_id)
   }
   sets.push("updated_at = datetime('now')")
   params.push(id)
@@ -73,7 +116,10 @@ app.put('/:id', async (c) => {
     .bind(...params)
     .run()
 
-  const note = await db.prepare('SELECT * FROM notes WHERE id = ?').bind(id).first<Note>()
+  const note = await db
+    .prepare(`${NOTE_SELECT} WHERE n.id = ?`)
+    .bind(id)
+    .first<NoteWithCategory>()
 
   if (!note) return c.json({ error: 'Note not found' }, 404)
   return c.json(note)

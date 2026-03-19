@@ -1,6 +1,8 @@
-import type { Note, CreateNote, UpdateNote } from '@shared/types'
+import type { NoteWithCategory, CreateNote, UpdateNote, Category, CreateCategory, UpdateCategory, AuthStatus, User } from '@shared/types'
 
 const BASE = '/api/notes'
+const CATEGORIES = '/api/categories'
+const AUTH = '/api/auth'
 
 async function request<T>(url: string, options?: RequestInit): Promise<T> {
   const res = await fetch(url, options)
@@ -13,20 +15,64 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const api = {
-  notesList: (query?: string) =>
-    request<Note[]>(query ? `${BASE}?q=${encodeURIComponent(query)}` : BASE),
+  // Auth
+  authStatus: () => request<AuthStatus>(`${AUTH}/status`),
 
-  notesGet: (id: string) => request<Note>(`${BASE}/${id}`),
-
-  notesCreate: (input: CreateNote) =>
-    request<Note>(BASE, {
+  authSetup: (input: { username: string; password: string }) =>
+    request<{ user: User }>(`${AUTH}/setup`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),
     }),
 
-  notesUpdate: (id: string, input: Omit<UpdateNote, 'id'>) =>
-    request<Note>(`${BASE}/${id}`, {
+  authLogin: (input: { username: string; password: string }) =>
+    request<{ user: User }>(`${AUTH}/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+
+  authLogout: () => request<void>(`${AUTH}/logout`, { method: 'POST' }),
+
+  // Categories
+  categoriesList: () => request<Category[]>(CATEGORIES),
+
+  categoriesCreate: (input: CreateCategory) =>
+    request<Category>(CATEGORIES, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+
+  categoriesUpdate: (id: string, input: UpdateCategory) =>
+    request<Category>(`${CATEGORIES}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+
+  categoriesDelete: (id: string) => request<void>(`${CATEGORIES}/${id}`, { method: 'DELETE' }),
+
+  // Notes (with category join)
+  notesList: (query?: string, categoryId?: string) => {
+    const params = new URLSearchParams()
+    if (query) params.set('q', query)
+    if (categoryId) params.set('category', categoryId)
+    const qs = params.toString()
+    return request<NoteWithCategory[]>(qs ? `${BASE}?${qs}` : BASE)
+  },
+
+  notesGet: (id: string) => request<NoteWithCategory>(`${BASE}/${id}`),
+
+  notesCreate: (input: CreateNote) =>
+    request<NoteWithCategory>(BASE, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+    }),
+
+  notesUpdate: (id: string, input: UpdateNote) =>
+    request<NoteWithCategory>(`${BASE}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(input),

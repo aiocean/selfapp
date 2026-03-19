@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import type { Note } from '@shared/types'
+import type { NoteWithCategory } from '@shared/types'
 
 defineProps<{
-  notes: Note[]
+  notes: NoteWithCategory[]
   selectedId?: string
   loading: boolean
 }>()
 
 defineEmits<{
-  select: [note: Note]
+  select: [note: NoteWithCategory]
   delete: [id: string]
 }>()
 

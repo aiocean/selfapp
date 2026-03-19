@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import type { Note } from '@shared/types'
+import type { NoteWithCategory } from '@shared/types'
 
-const props = defineProps<{ note: Note }>()
+const props = defineProps<{ note: NoteWithCategory }>()
 const emit = defineEmits<{ save: [data: { title: string; content: string }] }>()
 
 const title = ref(props.note.title)

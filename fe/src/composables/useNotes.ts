@@ -1,15 +1,15 @@
 import { ref } from 'vue'
-import type { Note, CreateNote, UpdateNote } from '@shared/types'
+import type { NoteWithCategory, CreateNote, UpdateNote } from '@shared/types'
 import { api } from './useApi'
 
-const notes = ref<Note[]>([])
+const notes = ref<NoteWithCategory[]>([])
 const loading = ref(false)
 
 export function useNotes() {
-  async function fetchNotes(query?: string) {
+  async function fetchNotes(query?: string, categoryId?: string) {
     loading.value = true
     try {
-      notes.value = await api.notesList(query)
+      notes.value = await api.notesList(query, categoryId)
     } finally {
       loading.value = false
     }

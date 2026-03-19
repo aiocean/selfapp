@@ -78,50 +78,66 @@ Nói với user: "Mình đang cài thêm kỹ năng cần thiết..."
 
 ---
 
-## Phase 3 — Phỏng vấn mục đích app
+## Phase 3 — Phỏng vấn: hiểu WORKFLOW của user
 
 **Gate check:** Đọc CLAUDE.md phần `App Identity`. Nếu các giá trị đã điền (không phải `__PLACEHOLDER__`) → bỏ qua phase này.
 
-### Cách phỏng vấn
+### Triết lý phỏng vấn
+
+User không biết mình muốn "app gì" — nhưng RẤT BIẾT mình đang làm gì hàng ngày mà mệt. Hỏi về WORKFLOW (việc lặp đi lặp lại), KHÔNG hỏi về features hay app.
 
 Dùng AskUserQuestion để hỏi từng câu. Giọng thân thiện, như đang trò chuyện.
 
 **Câu mở đầu:**
 
-> Chào bạn! Trước khi bắt đầu, mình cần hiểu bạn muốn làm app gì. Mình sẽ hỏi vài câu ngắn nhé — trả lời thoải mái, không cần biết kỹ thuật gì cả.
+> Chào bạn! Trước khi bắt đầu, mình muốn hiểu bạn đang cần gì. Mình sẽ hỏi vài câu ngắn — trả lời thoải mái bằng ngôn ngữ hàng ngày nhé, không cần biết kỹ thuật gì cả.
 
 **Hỏi tuần tự, mỗi lần 1 câu:**
 
-1. **Tên app**: "Bạn muốn đặt tên app là gì? Ví dụ: 'Nhật ký sức khoẻ', 'Quản lý chi tiêu', 'Sổ tay nấu ăn'..."
+1. **Việc lặp đi lặp lại**: "Trong công việc hoặc cuộc sống hàng ngày, có việc gì bạn phải làm đi làm lại mà thấy mất thời gian không? Ví dụ: ghi chi tiêu vào Excel, tổng hợp báo cáo từ nhiều nguồn, theo dõi thói quen..."
 
-2. **Mục đích**: "App này sẽ giúp bạn làm gì? Mô tả ngắn gọn thôi, ví dụ: 'ghi lại chi tiêu hàng ngày để biết tiền đi đâu'"
+2. **Cách làm hiện tại**: "Hiện tại bạn đang làm việc đó bằng cách nào? Dùng giấy, Excel, app nào đó, hay nhờ người khác?"
 
-3. **Vấn đề cần giải quyết**: "Hiện tại bạn đang gặp khó khăn gì mà muốn app giải quyết?"
+3. **Điểm khó chịu nhất**: "Phần nào trong quy trình đó khiến bạn khó chịu nhất? Chỗ nào tốn thời gian nhất?"
 
-4. **Ai dùng**: "Ai sẽ dùng app này? Chỉ mình bạn, hay chia sẻ với người khác nữa?"
+4. **Kết quả mong muốn**: "Nếu có app tự làm hộ bạn, sau khi dùng xong bạn muốn THẤY gì? Ví dụ: 'biết tháng này tiêu bao nhiêu', 'có danh sách việc cần làm hôm nay', 'bảng tổng hợp tuần'..."
 
-5. **Tính năng chính**: "Nếu app chỉ có thể làm 1-2 việc, bạn muốn nó làm gì nhất?"
+5. **Ai dùng**: "Chỉ mình bạn dùng thôi, hay muốn chia sẻ với ai nữa?"
 
 ### Quy tắc
 
 - Hỏi TỪNG CÂU MỘT, chờ trả lời rồi mới hỏi tiếp
-- Nếu chưa rõ → hỏi lại nhẹ nhàng, đưa ví dụ cụ thể
+- Nếu user nói chung chung → hỏi lại cụ thể: "Bạn cho mình ví dụ hôm qua bạn làm việc đó như nào?"
 - Nếu user trả lời dài → tóm tắt lại: "Mình hiểu là... đúng không?"
 - KHÔNG hỏi về kỹ thuật, tech stack, cấu trúc dữ liệu
-- KHÔNG gợi ý tính năng phức tạp
+- KHÔNG gợi ý tính năng phức tạp — để user mô tả bằng ngôn ngữ của họ
+- KHÔNG hỏi "bạn muốn app gì?" — hỏi "bạn đang LÀM gì?"
 
-### Sau khi hỏi xong — tóm tắt và xác nhận
+### Sau khi hỏi xong — tóm tắt bằng ngôn ngữ workflow
 
 > Mình hiểu rồi! Tóm lại:
-> - **Tên app**: [tên]
-> - **Mục đích**: [mục đích]
-> - **Vấn đề giải quyết**: [vấn đề]
+> - **Việc bạn muốn app giúp**: [workflow cụ thể]
+> - **Hiện tại đang làm bằng**: [cách hiện tại]
+> - **Phần khó chịu nhất**: [pain point]
+> - **Kết quả mong muốn**: [output user muốn thấy]
 > - **Người dùng**: [ai dùng]
-> - **Tính năng chính**: [tính năng]
 >
 > Đúng chưa? Có gì muốn thay đổi không?
 
 Chờ user xác nhận trước khi sang Phase 4.
+
+### Show-and-Refine — build rough draft NGAY
+
+Sau khi user xác nhận, KHÔNG lên kế hoạch dài dòng. Thay vào đó:
+
+1. AI tự đặt tên app dựa trên workflow (ví dụ: "Quản lý chi tiêu" nếu user theo dõi tiền)
+2. AI tự quyết định data model + UI cơ bản nhất
+3. Build rough draft chỉ với 1-2 tính năng cốt lõi
+4. Show cho user ngay: "Mình vừa tạo bản nháp đầu tiên — bạn mở trình duyệt xem thử nhé!"
+5. User react với cái THẬT, không phải tưởng tượng
+6. AI hỏi: "Bạn thấy sao? Có gì muốn thêm bớt không?"
+
+**Nguyên tắc: Xem rồi góp ý — dễ hơn tưởng tượng từ đầu.**
 
 ---
 
@@ -130,14 +146,45 @@ Chờ user xác nhận trước khi sang Phase 4.
 Cập nhật block `App Identity` trong CLAUDE.md:
 
 ```yaml
-app_name: "[tên app từ phỏng vấn]"
-app_goal: "[mục đích từ phỏng vấn]"
-problem_statement: "[vấn đề từ phỏng vấn]"
+app_name: "[AI tự đặt dựa trên workflow]"
+app_goal: "[workflow cụ thể user muốn tự động hoá]"
+problem_statement: "[pain point chính từ phỏng vấn]"
+current_process: "[cách user đang làm hiện tại]"
+desired_output: "[kết quả user muốn thấy]"
 ```
 
-Thêm context bổ sung vào CLAUDE.md nếu hữu ích (ai dùng, tính năng chính mong muốn).
+Thêm context bổ sung vào CLAUDE.md nếu hữu ích (ai dùng, tần suất dùng).
 
-**KHÔNG làm gì thêm ngoài cập nhật CLAUDE.md.**
+### Cập nhật tên app trong project
+
+Sau khi cập nhật CLAUDE.md, AI cần đổi tên app trong các file config cho khớp:
+
+1. **Tạo slug** từ `app_name` — viết thường, bỏ dấu, thay space bằng `-`. Ví dụ: "Quản lý chi tiêu" → `quan-ly-chi-tieu`
+
+2. **`wrangler.jsonc`** — đổi 2 chỗ:
+   - `"name"`: từ `"selfapp"` → `"<slug>"` (tên Worker trên Cloudflare)
+   - `"database_name"`: từ `"selfapp-db"` → `"<slug>-db"`
+   - `"database_id"`: reset về `""` (sẽ tạo database mới khi deploy)
+
+3. **`package.json`** — đổi 3 scripts có chứa `selfapp-db` → `<slug>-db`:
+   - `db:create`
+   - `db:migrate`
+   - `db:migrate:prod`
+
+**Ví dụ:** Nếu app tên "Sổ tay nấu ăn" → slug = `so-tay-nau-an`:
+```json
+// wrangler.jsonc
+"name": "so-tay-nau-an",
+"database_name": "so-tay-nau-an-db",
+"database_id": "",
+
+// package.json
+"db:create": "wrangler d1 create so-tay-nau-an-db",
+"db:migrate": "wrangler d1 migrations apply so-tay-nau-an-db --local",
+"db:migrate:prod": "wrangler d1 migrations apply so-tay-nau-an-db --remote",
+```
+
+**KHÔNG làm gì thêm ngoài cập nhật CLAUDE.md + config.**
 
 ---
 
@@ -145,11 +192,12 @@ Thêm context bổ sung vào CLAUDE.md nếu hữu ích (ai dùng, tính năng c
 
 > Xong rồi! Mình đã:
 > - Cài đặt mọi thứ cần thiết trên máy bạn
-> - Hiểu được bạn muốn app [tên app] để [mục đích]
+> - Hiểu được bạn muốn app giúp [workflow cụ thể]
+> - Tạo bản nháp đầu tiên — bạn mở trình duyệt xem thử nhé!
 >
-> Khi nào muốn bắt đầu xây app, cứ nói "mình muốn thêm tính năng [gì đó]" nhé!
+> Xem xong cho mình biết: thấy ổn không? Muốn thêm bớt gì?
 
-**DỪNG LẠI Ở ĐÂY.** Không tự động chuyển sang workflow khác.
+**DỪNG LẠI Ở ĐÂY.** Chờ user phản hồi về rough draft. Không tự động thêm tính năng.
 
 ---
 
