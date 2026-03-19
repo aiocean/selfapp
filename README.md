@@ -103,20 +103,17 @@ selfapp's infrastructure handles operations automatically:
 
 ## What's Inside
 
-selfapp is an open-source **full-stack app template** designed for AI to read, understand, and build upon.
+selfapp is an open-source **full-stack app** designed for AI to read, understand, and build upon.
 
 ```
 selfapp/
-├── template/           ← The full-stack app template
-│   ├── fe/             ← Frontend (Vue 3 + Tailwind CSS)
-│   ├── be/             ← Backend (Hono on Cloudflare Workers)
-│   ├── db/             ← Database (D1 / SQLite)
-│   ├── shared/         ← Shared data models
-│   └── .claude/        ← AI skills, agents & workflows
-│       ├── skills/     ← How AI should build, debug, deploy
-│       ├── agents/     ← Specialized AI agents (architect, reviewer, etc.)
-│       └── commands/   ← Slash commands for common workflows
-└── notes/              ← Research & design decisions
+├── fe/                 ← Frontend (Vue 3 + Tailwind CSS)
+├── be/                 ← Backend (Hono on Cloudflare Workers)
+├── db/                 ← Database (D1 / SQLite)
+├── shared/             ← Shared data models
+└── .claude/            ← AI skills, agents & workflows
+    ├── skills/         ← How AI should build, debug, deploy
+    └── commands/       ← Slash commands for common workflows
 ```
 
 ### Tech Stack
@@ -128,7 +125,7 @@ selfapp/
 | **Backend**  | Hono                          | Lightweight, Workers-native, TypeScript                       |
 | **Database** | D1 (managed SQLite)           | Zero config, automatic backups, 10GB free                     |
 | **Language** | TypeScript                    | End-to-end type safety                                        |
-| **AI**       | Claude Code + Skills          | AI reads the template and knows exactly how to build          |
+| **AI**       | Claude Code + Skills          | AI reads the codebase and knows exactly how to build          |
 
 ### Why Cloudflare Workers?
 
@@ -185,7 +182,7 @@ Just tell AI: _"Put my app online."_
 
 ## The Bigger Picture
 
-selfapp is not just a template. It's a belief system:
+selfapp is not just a starter kit. It's a belief system:
 
 1. **Software should be personal.** The best app for tracking _your_ habits is one built for _your_ habits — not a generic one with features you'll never use.
 
@@ -199,7 +196,7 @@ selfapp is not just a template. It's a belief system:
 
 ## Project Status
 
-selfapp is in active development. The template works end-to-end (build → deploy → operate), and we're refining the AI workflows for smoother non-technical user experiences.
+selfapp is in active development. It works end-to-end (build → deploy → operate), and we're refining the AI workflows for smoother non-technical user experiences.
 
 Contributions, feedback, and ideas are welcome.
 
