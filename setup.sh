@@ -37,7 +37,7 @@ else
   git clone --depth 1 https://github.com/aiocean/selfapp.git "$APP_DIR"
 fi
 
-cd "$APP_DIR/template"
+cd "$APP_DIR"
 
 # --- 4. Install project dependencies ---
 info "Cai dat dependencies..."
