@@ -135,11 +135,17 @@ install_skill() {
   fi
 }
 
-install_skill "frontend-design"       "https://github.com/anthropics/skills"       "frontend-design"
-install_skill "superpowers"           "obra/superpowers"                           ""
+# frontend-design cài qua claude CLI
+claude plugin install frontend-design@claude-plugins-official 2>/dev/null || warn "Không cài được frontend-design — chạy thủ công: claude plugin install frontend-design@claude-plugins-official"
+# superpowers cài qua claude CLI
+claude plugin install superpowers@claude-plugins-official 2>/dev/null || warn "Không cài được superpowers — chạy thủ công: claude plugin install superpowers@claude-plugins-official"
+claude plugin install code-simplifier@claude-plugins-official 2>/dev/null || warn "Không cài được code-simplifier — chạy thủ công: claude plugin install code-simplifier@claude-plugins-official"
 install_skill "wrangler"              "https://github.com/cloudflare/skills"       "wrangler"
 install_skill "workers-best-practices" "https://github.com/cloudflare/cloudflare-docs" "workers-best-practices"
 install_skill "cloudflare"            "https://github.com/cloudflare/cloudflare-docs" "cloudflare"
+
+claude plugin install feature-dev@claude-plugins-official 2>/dev/null || warn "Không cài được feature-dev — chạy thủ công: claude plugin install feature-dev@claude-plugins-official"
+claude plugin install typescript-lsp@claude-plugins-official 2>/dev/null || warn "Không cài được typescript-lsp — chạy thủ công: claude plugin install typescript-lsp@claude-plugins-official"
 
 # ============================================================
 step "7/8  Cài đặt GitNexus (code intelligence)"
