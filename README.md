@@ -144,30 +144,32 @@ AI can deploy a selfapp with a single tool call. No CLI commands, no config file
 
 ## Quick Start
 
-### Prerequisites
+All you need is a Mac and a Terminal. The setup script handles everything else.
 
-- [Bun](https://bun.sh) runtime
-- [Claude Code](https://claude.ai/code) (with Cloudflare MCP)
-- A Cloudflare account (free tier is enough)
+### One-Line Setup (macOS)
 
-### Create Your First selfapp
+Open Terminal, paste this, and press Enter:
 
 ```bash
-# 1. Clone the template
-git clone https://github.com/aiocean/selfapp.git
-cd selfapp/template
-
-# 2. Install dependencies
-bun install
-
-# 3. Set up the database
-bun run db:migrate
-
-# 4. Start developing
-bun run dev
+curl -fsSL https://raw.githubusercontent.com/aiocean/selfapp/main/template/setup.sh | bash
 ```
 
-Then open Claude Code and tell it what you want to build:
+Or with a custom app name:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/aiocean/selfapp/main/template/setup.sh | bash -s -- my-expense-tracker
+```
+
+The script automatically installs everything you need: Git, Node.js, Bun, Claude Code, and AI tools. No prior setup required.
+
+### After Setup
+
+```bash
+cd my-selfapp/template
+claude
+```
+
+Then tell AI what you want to build:
 
 > _"I want an app to track my daily expenses. I want to quickly add how much I spent and on what, and see a summary at the end of each week."_
 
@@ -175,11 +177,7 @@ AI takes it from there.
 
 ### Deploy to the Internet
 
-```bash
-bun run deploy
-```
-
-Or just tell AI: _"Put my app online."_
+Just tell AI: _"Put my app online."_
 
 ---
 

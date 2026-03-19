@@ -73,7 +73,7 @@ else
   git clone --depth 1 https://github.com/aiocean/selfapp.git "$APP_DIR"
 fi
 
-cd "$APP_DIR"
+cd "$APP_DIR/template"
 
 # ============================================================
 step "3/8  Cài đặt các gói phần mềm"
