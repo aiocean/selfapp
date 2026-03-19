@@ -164,8 +164,10 @@ The script automatically installs everything you need: Git, Node.js, Bun, Claude
 
 ### After Setup
 
+Follow the instructions printed by the script — it will tell you the exact `cd` command to run:
+
 ```bash
-cd my-selfapp/template
+cd <path-printed-by-script>
 claude
 ```
 
