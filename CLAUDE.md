@@ -104,7 +104,7 @@ User mô tả ý tưởng
 ## Project Structure
 
 ```
-template/                          # Bun workspaces monorepo
+.                                  # Bun workspaces monorepo (root)
 ├── package.json                   # Root: workspaces ["be", "fe"], shared devDeps
 ├── bun.lock                       # Single lockfile for all workspaces
 ├── wrangler.jsonc                 # Cloudflare Workers config (D1, assets, cron)
