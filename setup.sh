@@ -113,7 +113,7 @@ fi
 
 if command -v omc &>/dev/null; then
   info "Cài đặt OMC components..."
-  omc setup --force 2>/dev/null || omc install 2>/dev/null || warn "omc setup thất bại. Chạy 'omc setup' thủ công sau."
+  omc setup --force < /dev/null 2>/dev/null || omc install < /dev/null 2>/dev/null || warn "omc setup thất bại. Chạy 'omc setup' thủ công sau."
 else
   warn "Không tìm thấy omc — restart terminal rồi chạy 'omc setup'."
 fi
@@ -129,23 +129,23 @@ install_skill() {
 
   info "Cài skill: $name..."
   if [ -n "$skill_flag" ]; then
-    npx skills add "$source" --skill "$skill_flag" --agent claude-code --yes --copy 2>/dev/null || warn "Không cài được $name — chạy thủ công sau."
+    npx skills add "$source" --skill "$skill_flag" --agent claude-code --yes --copy < /dev/null 2>/dev/null || warn "Không cài được $name — chạy thủ công sau."
   else
-    npx skills add "$source" --agent claude-code --yes --copy 2>/dev/null || warn "Không cài được $name — chạy thủ công sau."
+    npx skills add "$source" --agent claude-code --yes --copy < /dev/null 2>/dev/null || warn "Không cài được $name — chạy thủ công sau."
   fi
 }
 
 # frontend-design cài qua claude CLI
-claude plugin install frontend-design@claude-plugins-official 2>/dev/null || warn "Không cài được frontend-design — chạy thủ công: claude plugin install frontend-design@claude-plugins-official"
+claude plugin install frontend-design@claude-plugins-official --scope local < /dev/null 2>/dev/null || warn "Không cài được frontend-design — chạy thủ công: claude plugin install frontend-design@claude-plugins-official --scope local"
 # superpowers cài qua claude CLI
-claude plugin install superpowers@claude-plugins-official 2>/dev/null || warn "Không cài được superpowers — chạy thủ công: claude plugin install superpowers@claude-plugins-official"
-claude plugin install code-simplifier@claude-plugins-official 2>/dev/null || warn "Không cài được code-simplifier — chạy thủ công: claude plugin install code-simplifier@claude-plugins-official"
+claude plugin install superpowers@claude-plugins-official --scope local < /dev/null 2>/dev/null || warn "Không cài được superpowers — chạy thủ công: claude plugin install superpowers@claude-plugins-official --scope local"
+claude plugin install code-simplifier@claude-plugins-official --scope local < /dev/null 2>/dev/null || warn "Không cài được code-simplifier — chạy thủ công: claude plugin install code-simplifier@claude-plugins-official --scope local"
 install_skill "wrangler"              "https://github.com/cloudflare/skills"       "wrangler"
 install_skill "workers-best-practices" "https://github.com/cloudflare/cloudflare-docs" "workers-best-practices"
 install_skill "cloudflare"            "https://github.com/cloudflare/cloudflare-docs" "cloudflare"
 
-claude plugin install feature-dev@claude-plugins-official 2>/dev/null || warn "Không cài được feature-dev — chạy thủ công: claude plugin install feature-dev@claude-plugins-official"
-claude plugin install typescript-lsp@claude-plugins-official 2>/dev/null || warn "Không cài được typescript-lsp — chạy thủ công: claude plugin install typescript-lsp@claude-plugins-official"
+claude plugin install feature-dev@claude-plugins-official --scope local < /dev/null 2>/dev/null || warn "Không cài được feature-dev — chạy thủ công: claude plugin install feature-dev@claude-plugins-official --scope local"
+claude plugin install typescript-lsp@claude-plugins-official --scope local < /dev/null 2>/dev/null || warn "Không cài được typescript-lsp — chạy thủ công: claude plugin install typescript-lsp@claude-plugins-official --scope local"
 
 # ============================================================
 step "7/8  Cài đặt GitNexus (code intelligence)"
@@ -158,7 +158,7 @@ fi
 
 if command -v gitnexus &>/dev/null; then
   info "Đánh index codebase..."
-  npx gitnexus analyze 2>/dev/null || true
+  npx gitnexus analyze < /dev/null 2>/dev/null || true
 fi
 
 # ============================================================
