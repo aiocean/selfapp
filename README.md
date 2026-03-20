@@ -148,13 +148,13 @@ All you need is a Mac and a Terminal. The setup script handles everything else.
 Open Terminal, paste this, and press Enter:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/aiocean/selfapp/main/setup.sh | bash
+curl -fsSL -H "Accept: application/vnd.github.raw" https://api.github.com/repos/aiocean/selfapp/contents/setup.sh | bash
 ```
 
 Or with a custom app name:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/aiocean/selfapp/main/setup.sh | bash -s -- my-expense-tracker
+curl -fsSL -H "Accept: application/vnd.github.raw" https://api.github.com/repos/aiocean/selfapp/contents/setup.sh | bash -s -- my-expense-tracker
 ```
 
 The script automatically installs everything you need: Git, Node.js, Bun, Claude Code, and AI tools. No prior setup required.

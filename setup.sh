@@ -2,7 +2,7 @@
 set -e
 
 # selfapp — One-line setup cho người không biết lập trình
-# Chạy: curl -fsSL https://raw.githubusercontent.com/aiocean/selfapp/main/setup.sh | bash
+# Chạy: curl -fsSL -H "Accept: application/vnd.github.raw" https://api.github.com/repos/aiocean/selfapp/contents/setup.sh | bash
 # Hoặc: bash setup.sh ten-app-cua-toi
 
 GREEN='\033[0;32m'
